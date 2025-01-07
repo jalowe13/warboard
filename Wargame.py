@@ -7,7 +7,7 @@ SCREEN_WIDTH: int = 1080
 SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
-MINOR: str = str(4)
+MINOR: str = str(5)
 PATCH: str = str(0)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 
@@ -64,28 +64,29 @@ class Deck:
         for c in self.cards:
             print(c.get_info())
 
+    # Draws a card onto the screen, this does the initial position and constructor spawning
     def draw_card(self):
         # Could draw based on card type
         card = self.cards.pop()
+        print("Current self draw primary is ", self.draw_primary)
         if self.draw_primary:  
             #self.draw_primary = False
             if card.get_suit() == "Attack":
-                card.update_cords(SCREEN_WIDTH/2 + 2*card.x_max,SCREEN_HEIGHT/4)
+                card.update_cords(SCREEN_WIDTH/2 + 2*card.x_max,SCREEN_HEIGHT/2.5)
             elif card.get_suit() == "Life":
-                card.update_cords(SCREEN_WIDTH/2,SCREEN_HEIGHT/4)
+                card.update_cords(SCREEN_WIDTH/2 + 6* card.x_max,SCREEN_HEIGHT/2.5)
             elif card.get_suit() == "Currency":
-                card.update_cords(SCREEN_WIDTH/2 + card.x_max,SCREEN_HEIGHT/3)
-        print(card.get_cords())
-        """"
+                card.update_cords(SCREEN_WIDTH/2 + card.x_max,SCREEN_HEIGHT/2)
+            self.draw_primary = False
         else:
-            self.draw_primary = True
+            print("Draw primary is not false")
             if card.get_suit() == "Attack":
-                card.update_cords(SCREEN_WIDTH + 2*card.x_max,SCREEN_HEIGHT/4)
+                card.update_cords(SCREEN_WIDTH + 9*card.x_max ,SCREEN_HEIGHT/2.5)
             if card.get_suit() == "Life":
-                card.update_cords(SCREEN_WIDTH,SCREEN_HEIGHT/4)
+                card.update_cords(SCREEN_WIDTH + 6*card.x_max,SCREEN_HEIGHT/2.5)
             elif card.get_suit() == "Currency":
-                card.update_cords(SCREEN_WIDTH + card.x_max,SCREEN_HEIGHT/3)
-        """
+                card.update_cords(SCREEN_WIDTH + 8*card.x_max,SCREEN_HEIGHT/2)
+            self.draw_primary = True
         print("The card drawn was ", card.get_info())
         print("There are now ", len(self.cards), " left")
         return card
@@ -110,7 +111,7 @@ class Card:
     def get_info(self):
         return f"{self.rank} of {self.suit}"
     def get_cords(self):
-        return f"{self.x},{self.y}"
+        return [self.x,self.y]
     def draw(self,screen): # Draw card on the screen
         # Card Background
         pygame.draw.rect(screen, self.color, (self.x,self.y,self.size_x,self.size_y))
@@ -166,12 +167,22 @@ def main():
     c: Card = attack_deck.draw_card()
     c1: Card = life_deck.draw_card()
     c2: Card = currency_deck.draw_card()
+    c3: Card = attack_deck.draw_card()
+    c4: Card = life_deck.draw_card()
+    c5: Card = currency_deck.draw_card()
+    
     player_cards.append(c)
     player_cards.append(c1)
     player_cards.append(c2)
+    player_cards.append(c3)
+    player_cards.append(c4)
+    player_cards.append(c5)
 
 
     # Game Loop
+    #
+    prev_cords = 0,0
+    current_card = c1 # Placeholder
     while running:
         # Event Detection
         for event in pygame.event.get():
@@ -180,14 +191,25 @@ def main():
             mouseX, mouseY = game.get_mouse()
 
             # Card press detection needs to be generalized
-            print(len(player_cards))
+            # TODO: Optimize for smoother collision checking
             for c in player_cards:
-                if pressed and c.in_range(mouseX,mouseY):
-                    c.update_cords(mouseX, mouseY)
-                c.update()
-                print("Card updated", c.get_cords(), c.get_info())
-            # Global and Menu Detection
+                x, y = c.get_cords()
+                if c != current_card and current_card.in_range(x,y):
+                    # Collision to prev cords
+                    c.update_cords(prev_cords[0],prev_cords[1])
+                    print("Card", c.get_info(), " is colliding with Card", current_card.get_info())
+                    # TODO: This needs to trigger only once and make a calculation based on card types
+                else:
+                    if pressed and c.in_range(mouseX,mouseY):
+                        c.update_cords(mouseX, mouseY)
+                        if c != current_card:
+                            current_card = c
+                        else: # Collision resets mouseX and Y
+                            prev_cords = mouseX, mouseY
+                    else:
+                        c.update()
             if event.type == pygame.QUIT:
+            # Global and Menu Detection
                 running = False
             screen.fill(SCREEN_BACKGROUND_COLOR)
 
