@@ -1,14 +1,15 @@
-import pygame
+import array
 import typing
+import pygame
 import random
 
-SCREEN_HEIGHT: int = 1920 
-SCREEN_WIDTH: int = 1080
+SCREEN_HEIGHT: int = 1280 
+SCREEN_WIDTH: int = 720
 SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
 MINOR: str = str(5)
-PATCH: str = str(0)
+PATCH: str = str(1)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 
 # Global Game State Object
@@ -181,46 +182,55 @@ def main():
 
     # Game Loop
     #
-    prev_cords = 0,0
-    current_card = c1 # Placeholder
+    prev_cords = 0, 0
+    current_card = None
+
     while running:
         # Event Detection
         for event in pygame.event.get():
             game.update()
-            pressed = game.get_pressed() 
+            pressed = game.get_pressed()
             mouseX, mouseY = game.get_mouse()
 
-            # Card press detection needs to be generalized
-            # TODO: Optimize for smoother collision checking
-            for c in player_cards:
-                x, y = c.get_cords()
-                if c != current_card and current_card.in_range(x,y):
-                    # Collision to prev cords
-                    c.update_cords(prev_cords[0],prev_cords[1])
-                    print("Card", c.get_info(), " is colliding with Card", current_card.get_info())
-                    # TODO: This needs to trigger only once and make a calculation based on card types
-                else:
-                    if pressed and c.in_range(mouseX,mouseY):
-                        c.update_cords(mouseX, mouseY)
-                        if c != current_card:
-                            current_card = c
-                        else: # Collision resets mouseX and Y
-                            prev_cords = mouseX, mouseY
-                    else:
-                        c.update()
-            if event.type == pygame.QUIT:
+        # Card press detection needs to be generalized
+        # TODO: Optimize for smoother collision checking
+        collision_detected = False
+
+        for c in player_cards:
+            x, y = c.get_cords()
+            if pressed and c.in_range(mouseX, mouseY):
+                if c != current_card:
+                    current_card = c
+                    prev_cords = c.get_cords()
+                current_card.update_cords(mouseX, mouseY)
+            elif c != current_card and current_card and current_card.in_range(x, y):
+                if not collision_detected:
+                    # Move current card back to previous coordinates
+                    current_card.update_cords(prev_cords[0], prev_cords[1])
+                    print("Card", c.get_info(), "is colliding with Card", current_card.get_info())
+                    # Perform calculation based on card types
+                    handle_collision(c, current_card)
+                    collision_detected = True
+            else:
+                c.update()
+
+        def handle_collision(card1, card2):
+            # Add your collision calculation logic here based on card types
+            pass
+
+        if event.type == pygame.QUIT:
             # Global and Menu Detection
-                running = False
-            screen.fill(SCREEN_BACKGROUND_COLOR)
+            running = False
+        screen.fill(SCREEN_BACKGROUND_COLOR)
 
-            # NOTE: Game Objects Update Function
+        # NOTE: Game Objects Update Function
 
-        # NOTE: Game Objects Draw Function 
-        
+        # NOTE: Game Objects Draw Function
+
         # Update all Cards
         for c in player_cards:
             c.draw(screen)
-        display_fps(game,screen,font)
+        display_fps(game, screen, font)
         pygame.display.flip()
         game.get_clock().tick(144)
 
