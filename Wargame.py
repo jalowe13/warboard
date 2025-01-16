@@ -8,8 +8,8 @@ SCREEN_WIDTH: int = 720
 SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
-MINOR: str = str(5)
-PATCH: str = str(1)
+MINOR: str = str(6)
+PATCH: str = str(0)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 
 # Global Game State Object
@@ -66,29 +66,32 @@ class Deck:
             print(c.get_info())
 
     # Draws a card onto the screen, this does the initial position and constructor spawning
-    def draw_card(self):
+    def draw_card(self, enemy):
         # Could draw based on card type
         card = self.cards.pop()
+        modifier: int = 0
+        if enemy:
+            modifier = 400 
         print("Current self draw primary is ", self.draw_primary)
         if self.draw_primary:  
             #self.draw_primary = False
             if card.get_suit() == "Attack":
-                card.update_cords(SCREEN_WIDTH/2 + 2*card.x_max,SCREEN_HEIGHT/2.5)
+                card.update_cords(SCREEN_WIDTH/2 ,SCREEN_HEIGHT/2.5 - modifier)
             elif card.get_suit() == "Life":
-                card.update_cords(SCREEN_WIDTH/2 + 6* card.x_max,SCREEN_HEIGHT/2.5)
+                card.update_cords(SCREEN_WIDTH/2 + 3 * card.x_max,SCREEN_HEIGHT/2.5 - modifier)
             elif card.get_suit() == "Currency":
-                card.update_cords(SCREEN_WIDTH/2 + card.x_max,SCREEN_HEIGHT/2)
+                card.update_cords(SCREEN_WIDTH/2 + card.x_max,SCREEN_HEIGHT/2 - modifier)
             self.draw_primary = False
         else:
             print("Draw primary is not false")
             if card.get_suit() == "Attack":
-                card.update_cords(SCREEN_WIDTH + 9*card.x_max ,SCREEN_HEIGHT/2.5)
+                card.update_cords(SCREEN_WIDTH + 6*card.x_max ,SCREEN_HEIGHT/2.5 - modifier)
             if card.get_suit() == "Life":
-                card.update_cords(SCREEN_WIDTH + 6*card.x_max,SCREEN_HEIGHT/2.5)
+                card.update_cords(SCREEN_WIDTH + 9*card.x_max,SCREEN_HEIGHT/2.5 - modifier)
             elif card.get_suit() == "Currency":
-                card.update_cords(SCREEN_WIDTH + 8*card.x_max,SCREEN_HEIGHT/2)
+                card.update_cords(SCREEN_WIDTH + 7*card.x_max,SCREEN_HEIGHT/2 - modifier)
             self.draw_primary = True
-        print("The card drawn was ", card.get_info())
+        print("The card drawn was ", card.get_info(), card.get_cords())
         print("There are now ", len(self.cards), " left")
         return card
 # Card that can be played
@@ -124,25 +127,28 @@ class Card:
         screen.blit(rank_text, (self.x, self.y + 50))  # Draw text at position (10, 10)
         # Card Face
     def update(self): # Update card bounding box position 
+        # self.x_min = self.x 
+        # self.x_max = self.x + (2*self.x_diff)
+        # self.y_min = self.y 
+        # self.y_max = self.y + (2*self.y_diff)
         self.x_min = self.x 
-        self.x_max = self.x + (2*self.x_diff)
         self.y_min = self.y 
-        self.y_max = self.y + (2*self.y_diff)
+        self.x_max = self.x + self.size_x 
+        self.y_max = self.y + self.size_y
     def update_cords(self, x, y): # Update card position
         self.x = x - self.size_x/2
         self.y = y - self.size_y/2
+        self.update()
     def in_range(self,x,y): # Check range of input x y in relation to the card
-        if self.x_min <= x <= self.x_max:
-            if self.y_min <= y <= self.y_max:
-                return True
-        return False 
+        if self.x_min <= x <= self.x_max and self.y_min <= y <= self.y_max:
+            return True
+        return False
 def setup():
     print("Start setup")
     try:
         pygame.init()
         pygame.display.set_caption(TITLE)
         game = Game()
-
     except(e):
         print("Setup failed. Is pygame installed?")
     print("Setup complete")
@@ -158,20 +164,25 @@ def main():
     screen = game.get_screen()    
     font = pygame.font.SysFont("Arial", 30)  # Use Arial font at size 30
     running = game.get_running() 
+
     attack_deck = Deck(["Attack"]) 
     life_deck = Deck(["Life"])
     currency_deck = Deck(["Currency"])
     
+    enemy_attack_deck = Deck(["Attack"]) 
+    enemy_life_deck = Deck(["Life"])
+    enemy_currency_deck = Deck(["Currency"])
+    
 
     player_cards: array[Card] = [] 
+    enemy_cards: array[Card] = []
     # Generate set of attack, life, and currency cards
-    c: Card = attack_deck.draw_card()
-    c1: Card = life_deck.draw_card()
-    c2: Card = currency_deck.draw_card()
-    c3: Card = attack_deck.draw_card()
-    c4: Card = life_deck.draw_card()
-    c5: Card = currency_deck.draw_card()
-    
+    c: Card = attack_deck.draw_card(enemy=False)
+    c1: Card = life_deck.draw_card(enemy=False)
+    c2: Card = currency_deck.draw_card(enemy=False)
+    c3: Card = attack_deck.draw_card(enemy=False)
+    c4: Card = life_deck.draw_card(enemy=False)
+    c5: Card = currency_deck.draw_card(enemy=False)
     player_cards.append(c)
     player_cards.append(c1)
     player_cards.append(c2)
@@ -179,57 +190,72 @@ def main():
     player_cards.append(c4)
     player_cards.append(c5)
 
+    ec: Card = enemy_attack_deck.draw_card(enemy=True)
+    ec1: Card = enemy_life_deck.draw_card(enemy=True)
+    ec2: Card = enemy_currency_deck.draw_card(enemy=True)
+    ec3: Card = enemy_attack_deck.draw_card(enemy=True)
+    ec4: Card = enemy_life_deck.draw_card(enemy=True)
+    ec5: Card = enemy_currency_deck.draw_card(enemy=True)
+    enemy_cards.append(ec)
+    enemy_cards.append(ec1)
+    enemy_cards.append(ec2)
+    enemy_cards.append(ec3)
+    enemy_cards.append(ec4)
+    enemy_cards.append(ec5)
+
 
     # Game Loop
-    #
     prev_cords = 0, 0
+    initial_draw = True
     current_card = None
+    need_update = True 
 
+    # Game Loop
     while running:
         # Event Detection
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
             game.update()
             pressed = game.get_pressed()
             mouseX, mouseY = game.get_mouse()
 
         # Card press detection needs to be generalized
-        # TODO: Optimize for smoother collision checking
-        collision_detected = False
-
         for c in player_cards:
             x, y = c.get_cords()
-            if pressed and c.in_range(mouseX, mouseY):
-                if c != current_card:
-                    current_card = c
-                    prev_cords = c.get_cords()
+            if pressed and current_card is not c and c.in_range(mouseX, mouseY):
+                if current_card is None:
+                    current_card = c 
+            if current_card is not None and pressed:
                 current_card.update_cords(mouseX, mouseY)
-            elif c != current_card and current_card and current_card.in_range(x, y):
-                if not collision_detected:
-                    # Move current card back to previous coordinates
-                    current_card.update_cords(prev_cords[0], prev_cords[1])
-                    print("Card", c.get_info(), "is colliding with Card", current_card.get_info())
-                    # Perform calculation based on card types
-                    handle_collision(c, current_card)
-                    collision_detected = True
-            else:
-                c.update()
+                need_update = True
+            elif not pressed:
+                current_card = None
 
-        def handle_collision(card1, card2):
-            # Add your collision calculation logic here based on card types
-            pass
+        # Enemy collision detection
+        if current_card is not None:
+            for c in enemy_cards:
+                if current_card is not c and (
+                    current_card.in_range(x, y) or
+                    current_card.in_range(c.x_min, c.y_min) or
+                    current_card.in_range(c.x_max, c.y_min) or
+                    current_card.in_range(c.x_min, c.y_max) or
+                    current_card.in_range(c.x_max, c.y_max)
+                ):
+                    print("Enemy collision")
 
-        if event.type == pygame.QUIT:
-            # Global and Menu Detection
-            running = False
-        screen.fill(SCREEN_BACKGROUND_COLOR)
+        # Only update the screen if needed
+        if need_update or initial_draw:
+            screen.fill(SCREEN_BACKGROUND_COLOR)
+            for c in player_cards:
+                c.draw(screen)
+            for c in enemy_cards:
+                c.draw(screen)
+            if current_card is not None:
+                current_card.draw(screen) 
+            need_update = False
+            initial_draw = False
 
-        # NOTE: Game Objects Update Function
-
-        # NOTE: Game Objects Draw Function
-
-        # Update all Cards
-        for c in player_cards:
-            c.draw(screen)
         display_fps(game, screen, font)
         pygame.display.flip()
         game.get_clock().tick(144)
