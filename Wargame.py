@@ -9,7 +9,7 @@ SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
 MINOR: str = str(6)
-PATCH: str = str(0)
+PATCH: str = str(1)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 
 # Global Game State Object
@@ -156,24 +156,19 @@ def setup():
     return game 
 # Display the fps 
 def display_fps(game,screen,font):
+    screen.fill(SCREEN_BACKGROUND_COLOR, (10, 10, 50, 30))  
     fps = str(int(game.get_fps()))
     fps_text = font.render(fps, True, (255, 255, 255))  # Render text in white
     screen.blit(fps_text, (10, 10))  # Draw text at position (10, 10)
-def main():
-    game = setup()
-    screen = game.get_screen()    
-    font = pygame.font.SysFont("Arial", 30)  # Use Arial font at size 30
-    running = game.get_running() 
 
+# Intialize Player Cards and Enemy Cards 
+def init_cards():
     attack_deck = Deck(["Attack"]) 
     life_deck = Deck(["Life"])
     currency_deck = Deck(["Currency"])
-    
     enemy_attack_deck = Deck(["Attack"]) 
     enemy_life_deck = Deck(["Life"])
     enemy_currency_deck = Deck(["Currency"])
-    
-
     player_cards: array[Card] = [] 
     enemy_cards: array[Card] = []
     # Generate set of attack, life, and currency cards
@@ -189,7 +184,6 @@ def main():
     player_cards.append(c3)
     player_cards.append(c4)
     player_cards.append(c5)
-
     ec: Card = enemy_attack_deck.draw_card(enemy=True)
     ec1: Card = enemy_life_deck.draw_card(enemy=True)
     ec2: Card = enemy_currency_deck.draw_card(enemy=True)
@@ -202,7 +196,55 @@ def main():
     enemy_cards.append(ec3)
     enemy_cards.append(ec4)
     enemy_cards.append(ec5)
+    return [player_cards,enemy_cards]
 
+# Detect if a card press occurs and send a need update request with updated mouse cords
+def detect_cardpress(pressed, current_card, player_cards, mouseX, mouseY, need_update):
+    for c in player_cards:
+        x, y = c.get_cords()
+        if pressed and current_card is not c and c.in_range(mouseX, mouseY):
+            if current_card is None:
+                current_card = c 
+        if current_card is not None and pressed:
+            current_card.update_cords(mouseX, mouseY)
+            need_update = True
+        elif not pressed:
+            current_card = None
+    return [x,y,current_card,need_update]
+
+# Detect if a game event happens
+def detect_events(game):
+    mouseX, mouseY, pressed = 0, 0, False  # Initialize variables
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        game.update()
+        pressed = game.get_pressed()
+        mouseX, mouseY = game.get_mouse()
+    return [mouseX,mouseY,pressed]
+
+# Detect if a card is colliding with another card
+def detect_collision(current_card,enemy_cards,x,y):
+    if current_card is not None:
+        for c in enemy_cards:
+            if current_card is not c and (
+                current_card.in_range(x, y) or
+                current_card.in_range(c.x_min, c.y_min) or
+                current_card.in_range(c.x_max, c.y_min) or
+                current_card.in_range(c.x_min, c.y_max) or
+                current_card.in_range(c.x_max, c.y_max)
+            ):
+                print("Enemy collision")
+                print("Card info", c.get_info())
+                print("Current Card Info", current_card.get_info())
+    return current_card
+
+def main():
+    game = setup()
+    screen = game.get_screen()    
+    font = pygame.font.SysFont("Arial", 30)  # Use Arial font at size 30
+    running = game.get_running() 
+    player_cards, enemy_cards = init_cards()
 
     # Game Loop
     prev_cords = 0, 0
@@ -213,37 +255,11 @@ def main():
     # Game Loop
     while running:
         # Event Detection
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            game.update()
-            pressed = game.get_pressed()
-            mouseX, mouseY = game.get_mouse()
-
+        mouseX, mouseY, pressed = detect_events(game)
         # Card press detection needs to be generalized
-        for c in player_cards:
-            x, y = c.get_cords()
-            if pressed and current_card is not c and c.in_range(mouseX, mouseY):
-                if current_card is None:
-                    current_card = c 
-            if current_card is not None and pressed:
-                current_card.update_cords(mouseX, mouseY)
-                need_update = True
-            elif not pressed:
-                current_card = None
-
+        x,y,current_card,need_update = detect_cardpress(pressed, current_card, player_cards, mouseX, mouseY, need_update) 
         # Enemy collision detection
-        if current_card is not None:
-            for c in enemy_cards:
-                if current_card is not c and (
-                    current_card.in_range(x, y) or
-                    current_card.in_range(c.x_min, c.y_min) or
-                    current_card.in_range(c.x_max, c.y_min) or
-                    current_card.in_range(c.x_min, c.y_max) or
-                    current_card.in_range(c.x_max, c.y_max)
-                ):
-                    print("Enemy collision")
-
+        current_card = detect_collision(current_card,enemy_cards,x,y)
         # Only update the screen if needed
         if need_update or initial_draw:
             screen.fill(SCREEN_BACKGROUND_COLOR)
