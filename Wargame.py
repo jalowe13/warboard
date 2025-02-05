@@ -2,14 +2,15 @@ import array
 import typing
 import pygame
 import random
+import os
 
 SCREEN_HEIGHT: int = 1280 
 SCREEN_WIDTH: int = 720
 SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
-MINOR: str = str(6)
-PATCH: str = str(1)
+MINOR: str = str(7)
+PATCH: str = str(0)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 
 # Global Game State Object
@@ -41,7 +42,67 @@ class Game:
         self.mouseHeld = mouseState.get_pressed()[0]
         self.mousePos = mouseState.get_pos()
 
-
+# Card that can be played
+class Card:
+    def __init__(self, rank:str, suit:str, x:float, y:float):
+        self.rank: str = rank
+        self.suit: str = suit  
+        self.x: float = x
+        self.y: float = y
+        self.color: tuple[int,int,int] = (255,0,0)
+        self.size_x: int = 64 
+        self.size_y: int = 89 
+        self.x_diff: float = self.size_x/2
+        self.y_diff: float = self.size_y/2
+        self.x_min: float = self.x - self.x_diff
+        self.x_max: float = self.x + self.x_diff
+        self.y_min: float = self.y - self.y_diff
+        self.y_max: float = self.y + self.y_diff
+    def get_suit(self):
+        return self.suit
+    def get_rank(self):
+        if self.rank == 'Jack':
+            return 10
+        if self.rank == 'Queen':
+            return 11
+        if self.rank == 'King':
+            return 12
+        if self.rank == 'Ace':
+            return 13
+        return int(self.rank)
+    def set_rank(self, rank: int):
+        self.rank = str(rank) 
+    def get_info(self):
+        return f"{self.rank} of {self.suit}"
+    def get_cords(self):
+        return [self.x,self.y]
+    def draw(self,screen): # Draw card on the screen
+        # Card Background
+        pygame.draw.rect(screen, self.color, (self.x,self.y,self.size_x,self.size_y))
+        font = pygame.font.SysFont("Arial", 30)  # Use Arial font at size 30
+        suit_text = font.render(self.suit, True, (255, 255, 255))  # Render text in white
+        rank_text = font.render(self.rank, True, (255, 255, 255))  # Render text in white
+             
+        screen.blit(suit_text, (self.x, self.y))  # Draw text at position (10, 10)
+        screen.blit(rank_text, (self.x, self.y + 50))  # Draw text at position (10, 10)
+        # Card Face
+    def update(self): # Update card bounding box position 
+        # self.x_min = self.x 
+        # self.x_max = self.x + (2*self.x_diff)
+        # self.y_min = self.y 
+        # self.y_max = self.y + (2*self.y_diff)
+        self.x_min = self.x 
+        self.y_min = self.y 
+        self.x_max = self.x + self.size_x 
+        self.y_max = self.y + self.size_y
+    def update_cords(self, x, y): # Update card position
+        self.x = x - self.size_x/2
+        self.y = y - self.size_y/2
+        self.update()
+    def in_range(self,x,y): # Check range of input x y in relation to the card
+        if self.x_min <= x <= self.x_max and self.y_min <= y <= self.y_max:
+            return True
+        return False
 class Deck:
     def __init__(self, suits: [str]):
         self.suits: array[str] = suits 
@@ -94,55 +155,7 @@ class Deck:
         print("The card drawn was ", card.get_info(), card.get_cords())
         print("There are now ", len(self.cards), " left")
         return card
-# Card that can be played
-class Card:
-    def __init__(self, rank:str, suit:str, x:float, y:float):
-        self.rank: str = rank
-        self.suit: str = suit  
-        self.x: float = x
-        self.y: float = y
-        self.color: tuple[int,int,int] = (255,0,0)
-        self.size_x: int = 64 
-        self.size_y: int = 89 
-        self.x_diff: float = self.size_x/2
-        self.y_diff: float = self.size_y/2
-        self.x_min: float = self.x - self.x_diff
-        self.x_max: float = self.x + self.x_diff
-        self.y_min: float = self.y - self.y_diff
-        self.y_max: float = self.y + self.y_diff
-    def get_suit(self):
-        return self.suit
-    def get_info(self):
-        return f"{self.rank} of {self.suit}"
-    def get_cords(self):
-        return [self.x,self.y]
-    def draw(self,screen): # Draw card on the screen
-        # Card Background
-        pygame.draw.rect(screen, self.color, (self.x,self.y,self.size_x,self.size_y))
-        font = pygame.font.SysFont("Arial", 30)  # Use Arial font at size 30
-        suit_text = font.render(self.suit, True, (255, 255, 255))  # Render text in white
-        rank_text = font.render(self.rank, True, (255, 255, 255))  # Render text in white
-             
-        screen.blit(suit_text, (self.x, self.y))  # Draw text at position (10, 10)
-        screen.blit(rank_text, (self.x, self.y + 50))  # Draw text at position (10, 10)
-        # Card Face
-    def update(self): # Update card bounding box position 
-        # self.x_min = self.x 
-        # self.x_max = self.x + (2*self.x_diff)
-        # self.y_min = self.y 
-        # self.y_max = self.y + (2*self.y_diff)
-        self.x_min = self.x 
-        self.y_min = self.y 
-        self.x_max = self.x + self.size_x 
-        self.y_max = self.y + self.size_y
-    def update_cords(self, x, y): # Update card position
-        self.x = x - self.size_x/2
-        self.y = y - self.size_y/2
-        self.update()
-    def in_range(self,x,y): # Check range of input x y in relation to the card
-        if self.x_min <= x <= self.x_max and self.y_min <= y <= self.y_max:
-            return True
-        return False
+
 def setup():
     print("Start setup")
     try:
@@ -213,7 +226,7 @@ def detect_cardpress(pressed, current_card, player_cards, mouseX, mouseY, need_u
     return [x,y,current_card,need_update]
 
 # Detect if a game event happens
-def detect_events(game):
+def detect_events(game, running):
     mouseX, mouseY, pressed = 0, 0, False  # Initialize variables
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -221,10 +234,10 @@ def detect_events(game):
         game.update()
         pressed = game.get_pressed()
         mouseX, mouseY = game.get_mouse()
-    return [mouseX,mouseY,pressed]
+    return [mouseX,mouseY,pressed, running]
 
 # Detect if a card is colliding with another card
-def detect_collision(current_card,enemy_cards,x,y):
+def detect_collision(current_card,player_cards,enemy_cards,x,y, need_update):
     if current_card is not None:
         for c in enemy_cards:
             if current_card is not c and (
@@ -237,7 +250,28 @@ def detect_collision(current_card,enemy_cards,x,y):
                 print("Enemy collision")
                 print("Card info", c.get_info())
                 print("Current Card Info", current_card.get_info())
-    return current_card
+                # Card info needs to be compared
+                # Needs to be an attack card, against a life card
+
+                if current_card.get_suit() == 'Attack' and c.get_suit() == 'Life':
+                    print("It is")
+                    # Compare the values
+                    r1 = current_card.get_rank()
+                    r2 = c.get_rank()
+                    if r1 >= r2: 
+                        print("Overtakes")
+                    else: # Calc diff
+                        diff = r2 - r1
+                        print("Diff", diff)
+                        c.set_rank(diff)
+
+                    if current_card in player_cards:
+                        player_cards = player_cards.remove(current_card)
+                        need_update = True
+                        break
+
+                #os.system("pause")
+    return current_card, need_update
 
 def main():
     game = setup()
@@ -255,11 +289,11 @@ def main():
     # Game Loop
     while running:
         # Event Detection
-        mouseX, mouseY, pressed = detect_events(game)
+        mouseX, mouseY, pressed, running = detect_events(game, running)
         # Card press detection needs to be generalized
         x,y,current_card,need_update = detect_cardpress(pressed, current_card, player_cards, mouseX, mouseY, need_update) 
         # Enemy collision detection
-        current_card = detect_collision(current_card,enemy_cards,x,y)
+        current_card, need_update = detect_collision(current_card,player_cards, enemy_cards,x,y, need_update)
         # Only update the screen if needed
         if need_update or initial_draw:
             screen.fill(SCREEN_BACKGROUND_COLOR)
@@ -269,8 +303,9 @@ def main():
                 c.draw(screen)
             if current_card is not None:
                 current_card.draw(screen) 
-            need_update = False
-            initial_draw = False
+            else:
+                need_update = False
+                initial_draw = False
 
         display_fps(game, screen, font)
         pygame.display.flip()
