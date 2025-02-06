@@ -10,7 +10,7 @@ SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
 MINOR: str = str(7)
-PATCH: str = str(0)
+PATCH: str = str(1)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 
 # Global Game State Object
@@ -260,14 +260,18 @@ def detect_collision(current_card,player_cards,enemy_cards,x,y, need_update):
                     r2 = c.get_rank()
                     if r1 >= r2: 
                         print("Overtakes")
+                        if c in enemy_cards:
+                            enemy_cards = enemy_cards.remove(c)
                     else: # Calc diff
                         diff = r2 - r1
                         print("Diff", diff)
                         c.set_rank(diff)
 
                     if current_card in player_cards:
+                        print("Must remove a card from the player cards")
                         player_cards = player_cards.remove(current_card)
                         need_update = True
+                        current_card = None
                         break
 
                 #os.system("pause")
