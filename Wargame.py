@@ -58,6 +58,7 @@ class Card:
         self.x_max: float = self.x + self.x_diff
         self.y_min: float = self.y - self.y_diff
         self.y_max: float = self.y + self.y_diff
+        self.draw_type: bool = False # Aligns starting position, determined by the deck
     def get_suit(self):
         return self.suit
     def get_rank(self):
@@ -70,8 +71,12 @@ class Card:
         if self.rank == 'Ace':
             return 13
         return int(self.rank)
+    def set_draw_type(self,draw: bool):
+        self.draw_type = draw
     def set_rank(self, rank: int):
-        self.rank = str(rank) 
+        self.rank = str(rank)
+    def get_draw_type(self):
+        return self.draw_type
     def get_info(self):
         return f"{self.rank} of {self.suit}"
     def get_cords(self):
@@ -127,13 +132,17 @@ class Deck:
             print(c.get_info())
 
     # Draws a card onto the screen, this does the initial position and constructor spawning
-    def draw_card(self, enemy):
+    def draw_card(self, enemy, draw_primary=None):
+        # TODO: Each card need to spawn back at the position where the other one was placed
+        if draw_primary is not None:
+            self.draw_primary = draw_primary 
         # Could draw based on card type
         card = self.cards.pop()
         modifier: int = 0
         if enemy:
             modifier = 400 
         print("Current self draw primary is ", self.draw_primary)
+        # card.set_draw_type(self.draw_primary) # Cards now remember the draw type
         if self.draw_primary:  
             #self.draw_primary = False
             if card.get_suit() == "Attack":
@@ -175,13 +184,9 @@ def display_fps(game,screen,font):
     screen.blit(fps_text, (10, 10))  # Draw text at position (10, 10)
 
 # Intialize Player Cards and Enemy Cards 
-def init_cards():
-    attack_deck = Deck(["Attack"]) 
-    life_deck = Deck(["Life"])
-    currency_deck = Deck(["Currency"])
-    enemy_attack_deck = Deck(["Attack"]) 
-    enemy_life_deck = Deck(["Life"])
-    enemy_currency_deck = Deck(["Currency"])
+def init_cards(attack_deck: Deck, life_deck: Deck, currency_deck: Deck,
+               enemy_attack_deck: Deck, enemy_life_deck: Deck, enemy_currency_deck:Deck):
+
     player_cards: array[Card] = [] 
     enemy_cards: array[Card] = []
     # Generate set of attack, life, and currency cards
@@ -214,7 +219,6 @@ def init_cards():
 # Detect if a card press occurs and send a need update request with updated mouse cords
 def detect_cardpress(pressed, current_card, player_cards, mouseX, mouseY, need_update):
     for c in player_cards:
-        x, y = c.get_cords()
         if pressed and current_card is not c and c.in_range(mouseX, mouseY):
             if current_card is None:
                 current_card = c 
@@ -223,11 +227,11 @@ def detect_cardpress(pressed, current_card, player_cards, mouseX, mouseY, need_u
             need_update = True
         elif not pressed:
             current_card = None
-    return [x,y,current_card,need_update]
+    return [current_card,need_update]
 
 # Detect if a game event happens
-def detect_events(game, running):
-    mouseX, mouseY, pressed = 0, 0, False  # Initialize variables
+def detect_events(game, running, mouseX, mouseY):
+    pressed = False  # Initialize variables
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -238,29 +242,32 @@ def detect_events(game, running):
 
 # Detect if a card is colliding with another card
 def detect_collision(current_card,player_cards,enemy_cards,x,y, need_update):
+    draw_type = None 
     if current_card is not None:
         for c in enemy_cards:
             if current_card is not c and (
-                current_card.in_range(x, y) or
                 current_card.in_range(c.x_min, c.y_min) or
                 current_card.in_range(c.x_max, c.y_min) or
                 current_card.in_range(c.x_min, c.y_max) or
                 current_card.in_range(c.x_max, c.y_max)
             ):
-                print("Enemy collision")
-                print("Card info", c.get_info())
-                print("Current Card Info", current_card.get_info())
+
                 # Card info needs to be compared
                 # Needs to be an attack card, against a life card
-
                 if current_card.get_suit() == 'Attack' and c.get_suit() == 'Life':
+                    print("Enemy collision")
+                    print("Card info", c.get_info())
+                    print("Current Card Info", current_card.get_info())
                     print("It is")
                     # Compare the values
                     r1 = current_card.get_rank()
                     r2 = c.get_rank()
+                    draw_type = c.get_draw_type()
+                    print("Draw type is", draw_type)
                     if r1 >= r2: 
                         print("Overtakes")
                         if c in enemy_cards:
+
                             enemy_cards = enemy_cards.remove(c)
                     else: # Calc diff
                         diff = r2 - r1
@@ -275,17 +282,30 @@ def detect_collision(current_card,player_cards,enemy_cards,x,y, need_update):
                         break
 
                 #os.system("pause")
-    return current_card, need_update
+    return current_card, need_update, draw_type
 
 def main():
     game = setup()
     screen = game.get_screen()    
     font = pygame.font.SysFont("Arial", 30)  # Use Arial font at size 30
     running = game.get_running() 
-    player_cards, enemy_cards = init_cards()
+
+    deck_types = ["Attack","Life","Currency"]
+    attack_deck = Deck(["Attack"]) 
+    life_deck = Deck(["Life"])
+    currency_deck = Deck(["Currency"])
+    enemy_attack_deck = Deck(["Attack"]) 
+    enemy_life_deck = Deck(["Life"])
+    enemy_currency_deck = Deck(["Currency"])
+    player_cards, enemy_cards = init_cards(attack_deck,life_deck,currency_deck
+                                           ,enemy_attack_deck, enemy_life_deck, enemy_currency_deck)
+    
+
+
+    print("Player cards size", len(player_cards))
 
     # Game Loop
-    prev_cords = 0, 0
+    x,y = 0, 0
     initial_draw = True
     current_card = None
     need_update = True 
@@ -293,11 +313,29 @@ def main():
     # Game Loop
     while running:
         # Event Detection
-        mouseX, mouseY, pressed, running = detect_events(game, running)
+        x, y, pressed, running = detect_events(game, running, x, y)
         # Card press detection needs to be generalized
-        x,y,current_card,need_update = detect_cardpress(pressed, current_card, player_cards, mouseX, mouseY, need_update) 
+        current_card,need_update = detect_cardpress(pressed, current_card, player_cards, x, y, need_update) 
         # Enemy collision detection
-        current_card, need_update = detect_collision(current_card,player_cards, enemy_cards,x,y, need_update)
+        current_card, need_update, draw_type = detect_collision(current_card,player_cards, enemy_cards,x,y, need_update)
+        if len(player_cards) == 5: # Card Destroyed, draw a new card
+            ak_amt = 0
+            lf_amt = 0
+            cr_amt = 0
+            for c in player_cards:
+                tp = c.get_suit()
+                if tp == "Attack":
+                    ak_amt = ak_amt + 1 
+                if tp == "Life":
+                    lf_amt = lf_amt + 1
+                if tp == "Currency":
+                    cr_amt = cr_amt + 1
+            if ak_amt < 2:
+                c: Card = attack_deck.draw_card(enemy=False, draw_primary=draw_type)
+                player_cards.append(c)
+            need_update = True
+            current_card = None
+
         # Only update the screen if needed
         if need_update or initial_draw:
             screen.fill(SCREEN_BACKGROUND_COLOR)
