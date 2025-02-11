@@ -3,15 +3,56 @@ import typing
 import pygame
 import random
 import os
+import requests
+import json
 
 SCREEN_HEIGHT: int = 1280 
 SCREEN_WIDTH: int = 720
 SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
-MINOR: str = str(7)
-PATCH: str = str(1)
+MINOR: str = str(8)
+PATCH: str = str(0)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
+API_URL = 'http://127.0.0.1:11434/api/chat'
+MODEL_NAME = 'deepseek-r1:8b'
+headers = {'Content-Type': 'application/json'}
+
+history = [] # Array of dict objects of the conversation history
+# Send a message to Deepseek locally through ollama
+def send_message(message: str):
+    try:
+        user_message = {
+            "role": "user",
+            "content": message
+        }
+        history.append(user_message)
+        payload = {
+            "model": MODEL_NAME,
+            "messages": history 
+        }
+        response = requests.post(API_URL, headers=headers, json=payload)
+        response.raise_for_status()
+        response_texts = response.text.strip().split('\n')
+        response_jsons = [json.loads(text) for text in response_texts]
+        response_string = "" 
+        for response_json in response_jsons:
+            print(response_json)
+            response_string += (response_json["message"]["content"])
+        # Response to be added to the history
+        ai_response = {
+            "role": "assistant",
+            "content": response_string
+        } 
+        history.append(ai_response)
+        print("Current History", history)
+        return response_string
+    except requests.exceptions.RequestException as e:
+        print(f"Error communicating with API: {e}")
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON response: {e}")
+        print(f"Response content: {response.text}")
+
 
 # Global Game State Object
 class Game:
@@ -335,6 +376,11 @@ def main():
                 player_cards.append(c)
             need_update = True
             current_card = None
+            # This is where the ai would then calculate its move, for now its the message prompt
+            user_message = input("Enter your message: ")
+            if user_message:
+                response = send_message(user_message)
+                print("Response: ", response)
 
         # Only update the screen if needed
         if need_update or initial_draw:
