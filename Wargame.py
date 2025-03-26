@@ -12,7 +12,7 @@ SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
 MINOR: str = str(9)
-PATCH: str = str(2)
+PATCH: str = str(3)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 API_URL = 'http://127.0.0.1:11434/api/chat'
 MODEL_NAME = 'llama3:8b'
@@ -128,11 +128,11 @@ Money: ${money}
 Items : {items}
 Game Context:
 Your opponent has cards with
-Entity A having a Life of {life} and an Attack of {attack}.
-Entity B having a Life of {life} and an Attack of {attack}.
+Entity A having a Life of {lifeA} and an Attack of {attack}.
+Entity B having a Life of {lifeB} and an Attack of {attack}.
 You have cards with
-Entity C having a Life of {life} and an Attack of {attack}.
-Entity D having a Life of {life} and an Attack of {attack}.
+Entity C having a Life of {lifeC} and an Attack of {attack}.
+Entity D having a Life of {lifeD} and an Attack of {attack}.
 
 You dont know what money you'll get from the enemy.
 
@@ -439,6 +439,29 @@ def detect_cardpress(pressed, current_card, player_cards, mouseX, mouseY, need_u
             current_card = None
     return [current_card,need_update]
 
+# TODO: Data cleaning for AI prompt evaluation
+def ai_game_state_evaulation(player_cards, enemy_cards):
+    print("Start")
+
+    lifeA, lifeB, lifeC, lifeD, attackA, attackB, attackC, attackD = None # Initial Life
+
+    for c in player_cards:
+        c_rank = c.get_rank()
+        c_suit = c.get_suit()
+        print("Player", c_rank, " of ", c_suit)
+        if c_suit == "Life":
+            if lifeA is None:
+                lifeA = c_rank
+            else:
+                lifeB = c_rank
+        # TODO: Attack
+            
+    for c in enemy_cards:
+        c_info = c.get_info()
+        print("Enemy", c_info)
+
+    os.system("pause")
+
 # Detect if a game event happens
 def detect_events(game, running, mouseX, mouseY):
     pressed = False  # Initialize variables
@@ -448,6 +471,8 @@ def detect_events(game, running, mouseX, mouseY):
         game.update()
         pressed = game.get_pressed()
         mouseX, mouseY = game.get_mouse()
+        
+
     return [mouseX,mouseY,pressed, running]
 
 # Detect if a card is colliding with another card
@@ -495,6 +520,8 @@ def detect_collision(current_card,player_cards,enemy_cards,x,y, need_update):
     return current_card, need_update, draw_type
 
 def main():
+
+    # Initial Setup
     game = setup()
     screen = game.get_screen()    
     font = pygame.font.SysFont("Arial", 30)  # Use Arial font at size 30
@@ -524,6 +551,11 @@ def main():
     while running:
         # Event Detection
         x, y, pressed, running = detect_events(game, running, x, y)
+        # TODO: Move this to detect_events
+        keys = pygame.key.get_pressed()
+        F1_pressed = keys[pygame.K_F1]
+        if F1_pressed:
+            ai_game_state_evaulation(player_cards,enemy_cards)
         # Card press detection needs to be generalized
         current_card,need_update = detect_cardpress(pressed, current_card, player_cards, x, y, need_update) 
         # Enemy collision detection
