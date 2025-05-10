@@ -11,11 +11,11 @@ SCREEN_WIDTH: int = 720
 SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
-MINOR: str = str(9)
-PATCH: str = str(3)
+MINOR: str = str(10)
+PATCH: str = str(0)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 API_URL = 'http://127.0.0.1:11434/api/chat'
-MODEL_NAME = 'llama3:8b'
+MODEL_NAME = 'llama3.1:8b'
 # MODEL_NAME = 'deepseek-r1:8b'
 headers = {'Content-Type': 'application/json'}
 
