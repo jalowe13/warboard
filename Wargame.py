@@ -11,18 +11,13 @@ SCREEN_WIDTH: int = 720
 SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
-MINOR: str = str(10)
+MINOR: str = str(11)
 PATCH: str = str(0)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 API_URL = 'http://127.0.0.1:11434/api/chat'
 MODEL_NAME = 'llama3.1:8b'
 # MODEL_NAME = 'deepseek-r1:8b'
 headers = {'Content-Type': 'application/json'}
-
-
-# TODO Run LLAMA Model for Early Game Evaluation, Deepseek for Mid to Late Game, with LLAMA for Dialogue prompts in between buffering
-
-# TODO Generate this with another prompt
 
 # Prompt Templates
 
@@ -97,8 +92,52 @@ Opponent's Entities:
 
 assistant:
 Dialogue: "Time to earn my keep."
-Internal Thought: *I could buy a Jack, but I think I'll try to take out his creature with a direct attack first.*
-Attack Phase: Entity A attacks Entity B. (6 - 4 = 2.  Entity B now has 2 Life remaining.)
+Internal Thought: *Opponent's Entity B has 6 Life. My Entity A has 4 Attack. I'll attack Entity B.*
+Attack Phase: Entity A attacks Entity B. (Entity B Life 6 - Entity A Attack 4 = 2. Entity B now has 2 Life remaining.)
+Shop Phase: None
+Item Use Phase: None
+
+EXAMPLE 2:
+
+user:
+[YOUR TURN]
+Game Info:
+Your Life: 18
+Opponent's Life: 15
+Your Money: $22
+Your Items: None
+Your Entities:
+    - Entity C: Life 10, Attack 5
+    - Entity D: Life 7, Attack 8
+Opponent's Entities:
+    - Entity A: Life 12, Attack 6
+    - Entity B: Life 9, Attack 4
+
+assistant:
+Dialogue: "Alright, let's see how you handle this."
+Internal Thought: *Entity A has more Life, but Entity B is weaker. My Entity D hits harder. I'll use Entity D to hit Entity B.*
+Attack Phase: Entity D attacks Entity B. (Entity B Life 9 - Entity D Attack 8 = 1. Entity B now has 1 Life remaining.)
+Shop Phase: None
+Item Use Phase: None
+
+EXAMPLE 3:
+
+user:
+[YOUR TURN]
+Game Info:
+Your Life: 15
+Opponent's Life: 10
+Your Money: $30
+Your Items: Jack
+Your Entities:
+    - Entity C: Life 8, Attack 9
+Opponent's Entities:
+    - Entity A: Life 5, Attack 7
+
+assistant:
+Dialogue: "This one's lookin' weak. Time to finish it."
+Internal Thought: *Opponent's Entity A only has 5 Life. My Entity C has 9 Attack. This should take it out.*
+Attack Phase: Entity C attacks Entity A. (Entity A Life 5 - Entity C Attack 9 = -4. Entity A is defeated and removed from play.)
 Shop Phase: None
 Item Use Phase: None
 '''
@@ -112,31 +151,6 @@ Strive for a lean, impactful writing style, keeping your prose precise. I will d
 '''
 
 # Prompt Templates Per Phase
-
-# TODO: Create variables for prompt inputs below
-ATTACK_PHASE = '''
-User Dialogue Directly to you ( Have this influence how you play):
-"{user_input}" 
-[YOUR TURN ATTACK PHASE]
-Game Info:
-Money: ${money}
-Items : {items}
-Game Context:
-Your opponent has cards with
-Entity A having a Life of {lifeA} and an Attack of {attack}.
-Entity B having a Life of {lifeB} and an Attack of {attack}.
-You have cards with
-Entity C having a Life of {lifeC} and an Attack of {attack}.
-Entity D having a Life of {lifeD} and an Attack of {attack}.
-
-You dont know what money you'll get from the enemy.
-
-Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
-Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
-Internal Thought: (Inserts in character internal thoughts here)
-Attack Phase: (Describe your Attack)
-'''
-
 SHOP_PHASE_WIN_MONEY = '''
 [YOUR TURN SHOP/ITEM PHASE]
 
@@ -151,11 +165,6 @@ Internal Thought: (Inserts in character internal thoughts here)
 Shop Phase: (If you have money to shop. Calculate total after purchase)
 Item Use Phase: (If you have an item to use)
 '''
-
-# NOTE: For below these outputs were from the previous phase
-# EX: 
-# Shop Phase: With my $20, I'll spend $20 on the Queen Item. That leaves me with... $0.
-# Item Use Phase: Since I just purchased an item, I'll use it right away! I'll choose Entity D and use the Queen Item to prevent the next attack against it. Now Entity D's Life is safe from harm for a turn.
 
 POST_COMBAT= '''
 [POST COMBAT PHASE]
@@ -172,51 +181,128 @@ You are to roleplay as Tyler the Cowboy in a card game called WARBOARD V1. Follo
 {GAME_RULES}
 {CHARACTER_PROMPT}
 {ROLEPLAY_RULES}
+{EXAMPLES}
 '''
+
+def create_attack_prompt(user_input: str, 
+                         money: int, 
+                         items: list[str], 
+                         opponent_entity_a_life: int, 
+                         opponent_entity_a_attack: int,
+                         opponent_entity_b_life: int, 
+                         opponent_entity_b_attack: int,
+                         ai_entity_c_life: int, 
+                         ai_entity_c_attack: int,
+                         ai_entity_d_life: int, 
+                         ai_entity_d_attack: int) -> str:
+    """
+    Formats the ATTACK_PHASE prompt string with current game state information.
+
+    Args:
+        user_input: The dialogue input from the human player for this turn.
+        money: The AI player's current money.
+        items: A list of the AI player's current items (strings).
+        opponent_entity_a_life: Life points of opponent's first entity.
+        opponent_entity_a_attack: Attack value of opponent's first entity.
+        opponent_entity_b_life: Life points of opponent's second entity.
+        opponent_entity_b_attack: Attack value of opponent's second entity.
+        ai_entity_c_life: Life points of AI's first entity.
+        ai_entity_c_attack: Attack value of AI's first entity.
+        ai_entity_d_life: Life points of AI's second entity.
+        ai_entity_d_attack: Attack value of AI's second entity.
+
+    Returns:
+        A formatted string ready to be sent to the AI model.
+    """
+    
+    # Format the items list into a readable string
+    items_str = ", ".join(items) if items else "None"
+
+    # Use an f-string to populate the template.
+    formatted_prompt = f'''
+User Dialogue Directly to you ( Have this influence how you play):
+"{user_input}" 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: ${money}
+Items : {items_str}
+Game Context:
+Your opponent has cards with
+Entity A having a Life of {opponent_entity_a_life} and an Attack of {opponent_entity_a_attack}.
+Entity B having a Life of {opponent_entity_b_life} and an Attack of {opponent_entity_b_attack}.
+You have cards with
+Entity C having a Life of {ai_entity_c_life} and an Attack of {ai_entity_c_attack}.
+Entity D having a Life of {ai_entity_d_life} and an Attack of {ai_entity_d_attack}.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+'''
+    return formatted_prompt
 
 
 
 history = [] # Array of dict objects of the conversation history
 # Send a message to Deepseek or LLAMA3 locally through ollama
-def send_message(message: str):
-    if len(history) == 0:
-        ai_system_prompt = {
-            "role": "assistant",
-            "content": SYSTEM_PROMPT
-        }
-        history.append(ai_system_prompt)
-    try:
-        user_message = {
-            "role": "user",
-            "content": message
-        }
-        history.append(user_message)
-        payload = {
-            "model": MODEL_NAME,
-            "messages": history 
-        }
-        response = requests.post(API_URL, headers=headers, json=payload)
-        response.raise_for_status()
-        response_texts = response.text.strip().split('\n')
-        response_jsons = [json.loads(text) for text in response_texts]
-        response_string = "" 
-        for response_json in response_jsons:
-            print(response_json)
-            response_string += (response_json["message"]["content"])
-        # Response to be added to the history
-        ai_response = {
-            "role": "assistant",
-            "content": response_string
-        } 
-        history.append(ai_response)
-        print("Current History", history)
-        return response_string
-    except requests.exceptions.RequestException as e:
-        print(f"Error communicating with API: {e}")
-    except json.JSONDecodeError as e:
-        print(f"Error decoding JSON response: {e}")
-        print(f"Response content: {response.text}")
+def send_message_streaming(message: str, temperature: float = 0.0, top_p: float = 1.0):
+    global MODEL_NAME, history
+    print(f"Sending streaming request to {MODEL_NAME}...")
 
+    if len(history) == 0:
+        ai_system_prompt = {"role": "system", "content": SYSTEM_PROMPT}
+        messages_for_payload = [ai_system_prompt]
+        history.append(ai_system_prompt)
+    else:
+        messages_for_payload = list(history)
+
+    user_message = {"role": "user", "content": message}
+    messages_for_payload.append(user_message)
+
+    payload = {
+        "model": MODEL_NAME,
+        "messages": messages_for_payload,
+        "options": {"temperature": temperature, "top_p": top_p},
+        "stream": True
+    }
+    print(f"Sending payload to Ollama: {json.dumps(payload, indent=2)}")
+
+    full_response_content = ""
+    try:
+        with requests.post(API_URL, headers=headers, json=payload, stream=True) as response:
+            response.raise_for_status()
+            print("AI is responding: ", end="", flush=True)
+            for line in response.iter_lines():
+                if line:
+                    try:
+                        chunk = json.loads(line.decode('utf-8'))
+                        token = chunk.get("message", {}).get("content", "")
+                        if not token and "response" in chunk: # Fallback for some models/endpoints
+                            token = chunk.get("response", "")
+                        # Output each token   
+                        print(token, end="", flush=True)
+                        full_response_content += token
+                        if chunk.get("done"):
+                            print("\nStream finished.")
+                            break
+                    except json.JSONDecodeError:
+                        print(f"\nError decoding a streaming chunk: {line}")
+                        continue 
+            print() # Newline after streaming is done
+
+        # Update persistent history
+        history.append(user_message)
+        history.append({"role": "assistant", "content": full_response_content})
+        return full_response_content
+
+    except requests.exceptions.RequestException as e:
+        print(f"\nError communicating with Ollama API: {e}")
+        return None
+    except Exception as e:
+        print(f"\nAn unexpected error occurred: {e}")
+        return None
 
 # Global Game State Object
 class Game:
@@ -575,7 +661,7 @@ def main():
             # This is where the ai would then calculate its move, for now its the message prompt
             user_message = input("Enter your message: ")
             if user_message:
-                response = send_message(user_message)
+                response = send_message_streaming(user_message)
                 print("Response: ", response)
 
         # Only update the screen if needed
@@ -595,4 +681,63 @@ def main():
         pygame.display.flip()
         game.get_clock().tick(144)
 
-main()
+def text_demo():
+    # os.system('clear')
+    print("Warboard Text Demo")
+    print("Model choice:", MODEL_NAME)
+    prompt_for_ai = create_attack_prompt(
+        user_input="Your turn, cowboy!",
+        money=25,
+        items=["Queen"],
+        opponent_entity_a_life=10, opponent_entity_a_attack=5,
+        opponent_entity_b_life=15, opponent_entity_b_attack=3,
+        ai_entity_c_life=12, ai_entity_c_attack=6,
+        ai_entity_d_life=8, ai_entity_d_attack=7
+    )
+    print(prompt_for_ai)
+    response = send_message_streaming(prompt_for_ai, 0.2) 
+    print(response)
+
+# Select choice of model for the demo
+def model_selection():
+    global MODEL_NAME
+    print("1. LLAMA 3.1 8b ")
+    print("2. Deepseek R1 7b")
+    print("3. Deepseek R1 8b")
+    mode_str = input("Which model mode?: ")
+    try:
+        mode_int = int(mode_str)
+        match mode_int:
+            case 1: # LLAMA3.1 8b
+                MODEL_NAME = 'llama3.1:8b'
+            case 2: # Deepseek 7b
+                MODEL_NAME = 'deepseek-r1:7b'
+            case 3:
+                MODEL_NAME = 'deepseek-r1:8b'
+            case _:
+                print("Invalid model choice please try again")
+                model_selection()
+        text_demo()
+    except ValueError:
+        print("Invalid numeric choice. Please select from the list of avaliable options")
+
+# Mode of choice for game or demo
+def mode_selection():
+    print("1. Demo")
+    print("2. Game")
+    mode_str = input("Which mode?: ")
+    try:
+        mode_int = int(mode_str)
+        match mode_int:
+            case 1:  
+                model_selection()
+            case 2: 
+                main()
+            case _:
+                print("Invalid mode choice please try again")
+                mode_selection()
+    except ValueError:
+        print("Invalid numeric choice. Please select from the list of avaliable options")
+
+mode_selection()
+
