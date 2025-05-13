@@ -12,7 +12,7 @@ SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
 MINOR: str = str(11)
-PATCH: str = str(2)
+PATCH: str = str(3)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 API_URL = 'http://127.0.0.1:11434/api/chat'
 MODEL_NAME = 'llama3.1:8b'
@@ -239,7 +239,7 @@ You dont know what money you'll get from the enemy.
 Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
 Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
 Internal Thought:(Your character's thoughts. You MUST ensure all stated card attributes (Life, Attack) and comparisons between your own cards (Entity C vs Entity D) are factually correct based on the provided Game Context before finalizing your move.)
-Attack Phase: (you MUST explicitly show the calculation of the remaining Life in parentheses, like this: (Defender Life - Attacker Attack = New Life), ensuring Defender Life and Attacker Attack stats are correct from Game Context)
+Attack Phase: (you MUST explicitly show the calculation of the remaining Life in parentheses, like this: (Defender Life - Attacker Attack = New Life), ensuring Defender Life and Attacker Attack stats are correct from Game Context. If New Life is 0 or less, you MUST state 'Defender is defeated and removed from play' and not report any other remaining life number for that defender.)
 '''
     return formatted_prompt
 
@@ -286,6 +286,7 @@ def send_message_streaming(message: str, temperature: float = 0.0, top_p: float 
                         full_response_content += token
                         if chunk.get("done"):
                             print("\nStream finished.")
+                            print("**********************************************")
                             break
                     except json.JSONDecodeError:
                         print(f"\nError decoding a streaming chunk: {line}")
@@ -705,9 +706,19 @@ def text_demo(run: int, user_input: str):
         ai_entity_c_life=12, ai_entity_c_attack=6,
         ai_entity_d_life=8, ai_entity_d_attack=7
     )
+    # prompt_for_ai = create_attack_prompt(
+    #     user_input=user_input, 
+    #     money=10,
+    #     items=[], 
+    #     opponent_entity_a_life=8, opponent_entity_a_attack=6,
+    #     opponent_entity_b_life=18, opponent_entity_b_attack=4,
+    #     ai_entity_c_life=10, ai_entity_c_attack=4,
+    #     ai_entity_d_life=6, ai_entity_d_attack=9
+    # )
     print(prompt_for_ai)
     response = send_message_streaming(prompt_for_ai, 0.2) 
     print(response)
+    print("**********************************************")
 
 # Select choice of model for the demo
 def model_selection():
