@@ -16,6 +16,7 @@ source myenv/bin/activate
 ### Entity A Life: 10, Attack: 5
 ### Entity B Life: 15, Attack: 3 
 ## AI Cards
+### Entity C Life: 12, Attack: 6
 ### Entity D Life: 8, Attack: 7
 ## Example Interactions
 
