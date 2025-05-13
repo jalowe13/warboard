@@ -12,7 +12,7 @@ SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
 MINOR: str = str(11)
-PATCH: str = str(0)
+PATCH: str = str(1)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 API_URL = 'http://127.0.0.1:11434/api/chat'
 MODEL_NAME = 'llama3.1:8b'
@@ -148,6 +148,7 @@ ROLEPLAY RULES
 Immerse me in the world as {{char}}. Your contributions must be imaginative, discerning, narratively consistent, and richly detailed, reflecting current instructions and the story so far.
 Convey {{char}}'s sensory perceptions with striking clarity. Subtly integrate details of {{char}}'s physical presence. Hint at {{char}}'s internal state through understated physical actions. From time to time, include {{char}}'s inner monologue (first-person "I" statements) formatted thusly.
 Strive for a lean, impactful writing style, keeping your prose precise. I will determine the direction of events; your role is to focus on {{char}}'s present experience and immediate responses. Meticulously honor all established plot points to maintain the story's integrity.
+Crucially, in the Attack Phase description, you MUST explicitly show the calculation of the remaining Life in parentheses, like this: (Defender Life - Attacker Attack = New Life)
 '''
 
 # Prompt Templates Per Phase
@@ -183,7 +184,7 @@ You are to roleplay as Tyler the Cowboy in a card game called WARBOARD V1. Follo
 {ROLEPLAY_RULES}
 {EXAMPLES}
 '''
-
+# Creating a formatted dynamic attack prompt based on inputs
 def create_attack_prompt(user_input: str, 
                          money: int, 
                          items: list[str], 
@@ -249,7 +250,7 @@ history = [] # Array of dict objects of the conversation history
 # Send a message to Deepseek or LLAMA3 locally through ollama
 def send_message_streaming(message: str, temperature: float = 0.0, top_p: float = 1.0):
     global MODEL_NAME, history
-    print(f"Sending streaming request to {MODEL_NAME}...")
+    #print(f"Sending streaming request to {MODEL_NAME}...")
 
     if len(history) == 0:
         ai_system_prompt = {"role": "system", "content": SYSTEM_PROMPT}
@@ -267,7 +268,7 @@ def send_message_streaming(message: str, temperature: float = 0.0, top_p: float 
         "options": {"temperature": temperature, "top_p": top_p},
         "stream": True
     }
-    print(f"Sending payload to Ollama: {json.dumps(payload, indent=2)}")
+    #print(f"Sending payload to Ollama: {json.dumps(payload, indent=2)}")
 
     full_response_content = ""
     try:
@@ -600,6 +601,7 @@ def detect_collision(current_card,player_cards,enemy_cards,x,y, need_update):
                 #os.system("pause")
     return current_card, need_update, draw_type
 
+# Main Game Logic Enter
 def main():
 
     # Initial Setup
@@ -681,12 +683,22 @@ def main():
         pygame.display.flip()
         game.get_clock().tick(144)
 
-def text_demo():
+def recurring_runs():
+    global history
+    for i in range(20):
+        if i % 2 == 0:
+            user = "Your turn, cowboy!"
+        else:
+            user = "You don't stand a chance."
+        history = []
+        text_demo(i, user)
+
+def text_demo(run: int, user_input: str):
     # os.system('clear')
-    print("Warboard Text Demo")
+    print("---Warboard Text Demo Run ", run, "---")
     print("Model choice:", MODEL_NAME)
     prompt_for_ai = create_attack_prompt(
-        user_input="Your turn, cowboy!",
+        user_input=user_input,
         money=25,
         items=["Queen"],
         opponent_entity_a_life=10, opponent_entity_a_attack=5,
@@ -717,7 +729,7 @@ def model_selection():
             case _:
                 print("Invalid model choice please try again")
                 model_selection()
-        text_demo()
+        text_demo(0)
     except ValueError:
         print("Invalid numeric choice. Please select from the list of avaliable options")
 
@@ -725,6 +737,7 @@ def model_selection():
 def mode_selection():
     print("1. Demo")
     print("2. Game")
+    print("3. Iterations")
     mode_str = input("Which mode?: ")
     try:
         mode_int = int(mode_str)
@@ -733,6 +746,8 @@ def mode_selection():
                 model_selection()
             case 2: 
                 main()
+            case 3:
+                recurring_runs()
             case _:
                 print("Invalid mode choice please try again")
                 mode_selection()

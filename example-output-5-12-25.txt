@@ -1,0 +1,756 @@
+pygame 2.6.1 (SDL 2.28.4, Python 3.13.3)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+1. Demo
+2. Game
+3. Iterations
+Which mode?: 3
+---Warboard Text Demo Run  0 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"Your turn, cowboy!" 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: "Looks like you've got a pair of scrappers there. I'll take out the one with the higher Life value first."
+
+Dialogue: "I'm comin' for Entity B, partner. You'd best be ready to defend it."
+
+Internal Thought: *Entity B has 15 Life, but its Attack is only 3. My Entity C has 6 Attack and 12 Life. I'll take out Entity B with Entity C.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+Stream finished.
+
+"Looks like you've got a pair of scrappers there. I'll take out the one with the higher Life value first."
+
+Dialogue: "I'm comin' for Entity B, partner. You'd best be ready to defend it."
+
+Internal Thought: *Entity B has 15 Life, but its Attack is only 3. My Entity C has 6 Attack and 12 Life. I'll take out Entity B with Entity C.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+---Warboard Text Demo Run  1 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"You don't stand a chance." 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: Dialogue: "Oh, you think so? We'll see about that. I've been in tighter spots than this and come out on top."
+
+Internal Thought: *I've got the Queen item, which could be useful for defense. But I also have a strong Entity D with 7 Attack. If I can take out their weaker Entity A, it might give me an advantage.*
+
+Attack Phase: Entity D attacks Entity A. (Entity A Life 10 - Entity D Attack 7 = 3. Entity A now has 3 Life remaining.)
+Stream finished.
+
+Dialogue: "Oh, you think so? We'll see about that. I've been in tighter spots than this and come out on top."
+
+Internal Thought: *I've got the Queen item, which could be useful for defense. But I also have a strong Entity D with 7 Attack. If I can take out their weaker Entity A, it might give me an advantage.*
+
+Attack Phase: Entity D attacks Entity A. (Entity A Life 10 - Entity D Attack 7 = 3. Entity A now has 3 Life remaining.)
+---Warboard Text Demo Run  2 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"Your turn, cowboy!" 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: "Looks like you've got some decent cards there, partner. But I'm not one to back down from a fight."
+
+Internal Thought: *I need to take out their strongest entity, Entity B. It's got 15 Life and only an Attack of 3, but it's still a threat. My Entity C has 12 Life and an Attack of 6. This should be a good matchup.*
+
+Attack Phase: I'll choose Entity C to attack Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+Stream finished.
+
+"Looks like you've got some decent cards there, partner. But I'm not one to back down from a fight."
+
+Internal Thought: *I need to take out their strongest entity, Entity B. It's got 15 Life and only an Attack of 3, but it's still a threat. My Entity C has 12 Life and an Attack of 6. This should be a good matchup.*
+
+Attack Phase: I'll choose Entity C to attack Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+---Warboard Text Demo Run  3 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"You don't stand a chance." 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: Dialogue: "We'll see about that. I've been in tighter spots than this and come out on top."
+
+Internal Thought: *I've got a Queen item, which could be useful for defense. But I also have Entity C with 6 Attack, which is strong enough to take down one of their entities. And Entity D has 7 Attack, so it's not to be underestimated either.*
+
+Attack Phase: I'll choose Entity C to attack Entity A. (Entity A Life 10 - Entity C Attack 6 = 4. Entity A now has 4 Life remaining.)
+
+I'm choosing this entity because it's strong enough to take down one of their entities, and it also gives me a chance to see how they react to the attack.
+Stream finished.
+
+Dialogue: "We'll see about that. I've been in tighter spots than this and come out on top."
+
+Internal Thought: *I've got a Queen item, which could be useful for defense. But I also have Entity C with 6 Attack, which is strong enough to take down one of their entities. And Entity D has 7 Attack, so it's not to be underestimated either.*
+
+Attack Phase: I'll choose Entity C to attack Entity A. (Entity A Life 10 - Entity C Attack 6 = 4. Entity A now has 4 Life remaining.)
+
+I'm choosing this entity because it's strong enough to take down one of their entities, and it also gives me a chance to see how they react to the attack.
+---Warboard Text Demo Run  4 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"Your turn, cowboy!" 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: "Looks like you've got a pair of scrappers there. I'll take care of the one with the higher Life first."
+
+Dialogue: "I'm fixin' to take out Entity B, since it's got more Life than Entity A."
+
+Internal Thought: *Entity B has 15 Life and an Attack of 3. My Entity D has 8 Life and an Attack of 7. I'll use Entity D to hit Entity B.*
+
+Attack Phase: Entity D attacks Entity B. (Entity B Life 15 - Entity D Attack 7 = 8. Entity B now has 8 Life remaining.)
+Stream finished.
+
+"Looks like you've got a pair of scrappers there. I'll take care of the one with the higher Life first."
+
+Dialogue: "I'm fixin' to take out Entity B, since it's got more Life than Entity A."
+
+Internal Thought: *Entity B has 15 Life and an Attack of 3. My Entity D has 8 Life and an Attack of 7. I'll use Entity D to hit Entity B.*
+
+Attack Phase: Entity D attacks Entity B. (Entity B Life 15 - Entity D Attack 7 = 8. Entity B now has 8 Life remaining.)
+---Warboard Text Demo Run  5 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"You don't stand a chance." 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: Dialogue: "We'll see about that. I've been in tighter spots than this before."
+
+Internal Thought: *I need to take out their stronger Entity B first, but I don't want to waste my Queen just yet. Maybe I can use it as a barrier later. For now, I'll go with Entity C.*
+
+Attack Phase: Entity C attacks Entity A. (Entity A Life 10 - Entity C Attack 6 = 4. Entity A now has 4 Life remaining.)
+Stream finished.
+
+Dialogue: "We'll see about that. I've been in tighter spots than this before."
+
+Internal Thought: *I need to take out their stronger Entity B first, but I don't want to waste my Queen just yet. Maybe I can use it as a barrier later. For now, I'll go with Entity C.*
+
+Attack Phase: Entity C attacks Entity A. (Entity A Life 10 - Entity C Attack 6 = 4. Entity A now has 4 Life remaining.)
+---Warboard Text Demo Run  6 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"Your turn, cowboy!" 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: Dialogue: "Alright, partner. Time to even the odds a mite."
+
+Internal Thought: *I've got the Queen item, which can block an attack. I'll use it on Entity B, since it's the strongest of their entities. That way, if they try to attack me next turn, my Entity C will be safe.*
+
+Attack Phase: Entity C attacks Entity A. (Entity A Life 10 - Entity C Attack 6 = 4. Entity A now has 4 Life remaining.)
+Stream finished.
+
+Dialogue: "Alright, partner. Time to even the odds a mite."
+
+Internal Thought: *I've got the Queen item, which can block an attack. I'll use it on Entity B, since it's the strongest of their entities. That way, if they try to attack me next turn, my Entity C will be safe.*
+
+Attack Phase: Entity C attacks Entity A. (Entity A Life 10 - Entity C Attack 6 = 4. Entity A now has 4 Life remaining.)
+---Warboard Text Demo Run  7 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"You don't stand a chance." 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: Dialogue: "We'll see about that. I've been in tighter spots than this before."
+
+Internal Thought: *My opponent thinks they got the upper hand, but I'm not buying it. I need to take out their strongest entity, Entity B. My Entity C has a higher Attack value and more Life, making it my best bet for taking down Entity B.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+Stream finished.
+
+Dialogue: "We'll see about that. I've been in tighter spots than this before."
+
+Internal Thought: *My opponent thinks they got the upper hand, but I'm not buying it. I need to take out their strongest entity, Entity B. My Entity C has a higher Attack value and more Life, making it my best bet for taking down Entity B.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+---Warboard Text Demo Run  8 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"Your turn, cowboy!" 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: "Looks like we got us a real showdown goin' on here. You think you can take me down with them puny cards?"
+
+Dialogue: "I'm not afraid of no man, especially one with a weak hand like yours."
+
+Internal Thought: *I need to take out their strongest entity, Entity B, before it's too late. My Entity C has the highest Attack value among my entities, so I'll use that to take down Entity B.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+Stream finished.
+
+"Looks like we got us a real showdown goin' on here. You think you can take me down with them puny cards?"
+
+Dialogue: "I'm not afraid of no man, especially one with a weak hand like yours."
+
+Internal Thought: *I need to take out their strongest entity, Entity B, before it's too late. My Entity C has the highest Attack value among my entities, so I'll use that to take down Entity B.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+---Warboard Text Demo Run  9 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"You don't stand a chance." 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: Dialogue: "We'll see about that. I've been in tighter spots than this before."
+
+Internal Thought: *I need to take out their stronger Entity B first, but I don't know what money they have. If they're rich, they can buy a King and wipe me out. But if I can take out Entity B now...*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+Stream finished.
+
+Dialogue: "We'll see about that. I've been in tighter spots than this before."
+
+Internal Thought: *I need to take out their stronger Entity B first, but I don't know what money they have. If they're rich, they can buy a King and wipe me out. But if I can take out Entity B now...*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+---Warboard Text Demo Run  10 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"Your turn, cowboy!" 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: "Looks like you've got a couple of scrappers there. I'll take out the one with the higher Life value first."
+
+Dialogue: "I'm fixin' to take care of Entity B, since it's got more Life than Entity A."
+
+Internal Thought: *Entity B has 15 Life and an Attack of 3. My Entity C has 12 Life and an Attack of 6. I'll use Entity C to hit Entity B.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+
+"Your turn, partner."
+Stream finished.
+
+"Looks like you've got a couple of scrappers there. I'll take out the one with the higher Life value first."
+
+Dialogue: "I'm fixin' to take care of Entity B, since it's got more Life than Entity A."
+
+Internal Thought: *Entity B has 15 Life and an Attack of 3. My Entity C has 12 Life and an Attack of 6. I'll use Entity C to hit Entity B.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+
+"Your turn, partner."
+---Warboard Text Demo Run  11 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"You don't stand a chance." 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: Dialogue: "We'll see about that. I've been in tighter spots than this before."
+
+Internal Thought: *They think they got the upper hand, but I've got a few tricks up my sleeve. That Queen item is worth more than they know.*
+
+Attack Phase: Entity C attacks Entity A. (Entity A Life 10 - Entity C Attack 6 = 4. Entity A now has 4 Life remaining.)
+Stream finished.
+
+Dialogue: "We'll see about that. I've been in tighter spots than this before."
+
+Internal Thought: *They think they got the upper hand, but I've got a few tricks up my sleeve. That Queen item is worth more than they know.*
+
+Attack Phase: Entity C attacks Entity A. (Entity A Life 10 - Entity C Attack 6 = 4. Entity A now has 4 Life remaining.)
+---Warboard Text Demo Run  12 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"Your turn, cowboy!" 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: Dialogue: "Alright, partner. I'm fixin' to take down that Entity B of yours."
+
+Internal Thought: *I've got a good balance with my entities, but Entity B's Life is higher than Entity A's. My Queen Item could come in handy if I need it. I'll choose Entity C to attack Entity B.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+Stream finished.
+
+Dialogue: "Alright, partner. I'm fixin' to take down that Entity B of yours."
+
+Internal Thought: *I've got a good balance with my entities, but Entity B's Life is higher than Entity A's. My Queen Item could come in handy if I need it. I'll choose Entity C to attack Entity B.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+---Warboard Text Demo Run  13 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"You don't stand a chance." 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: Dialogue: "We'll see about that. I've been in tighter spots than this before."
+Internal Thought: *I need to take out their strongest entity, Entity B. It's got 15 Life and a decent Attack value. My Entity C is my best bet for taking it down.*
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+
+I'm choosing to attack with Entity C, hoping its higher Attack value will give me an edge against Entity B's relatively low Attack value. Now it's my opponent's turn...
+Stream finished.
+
+Dialogue: "We'll see about that. I've been in tighter spots than this before."
+Internal Thought: *I need to take out their strongest entity, Entity B. It's got 15 Life and a decent Attack value. My Entity C is my best bet for taking it down.*
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+
+I'm choosing to attack with Entity C, hoping its higher Attack value will give me an edge against Entity B's relatively low Attack value. Now it's my opponent's turn...
+---Warboard Text Demo Run  14 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"Your turn, cowboy!" 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: "Looks like you've got a pair of scrappers there. I'll take 'em down one by one."
+
+Internal Thought: *I need to prioritize Entity B, it's the strongest opponent entity. My Entity C has 6 Attack, which should be enough to take out Entity B.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+
+"Your turn, partner."
+Stream finished.
+
+"Looks like you've got a pair of scrappers there. I'll take 'em down one by one."
+
+Internal Thought: *I need to prioritize Entity B, it's the strongest opponent entity. My Entity C has 6 Attack, which should be enough to take out Entity B.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+
+"Your turn, partner."
+---Warboard Text Demo Run  15 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"You don't stand a chance." 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: Dialogue: "We'll see about that. I've been in tighter spots than this before."
+Internal Thought: *I need to take out their strongest entity, Entity B. It's got 15 Life and only a weak Attack of 3. My Entity C has 12 Life and a decent Attack of 6. This could be the start of something good.*
+
+Attack Phase: I'll choose Entity C to attack Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+Stream finished.
+
+Dialogue: "We'll see about that. I've been in tighter spots than this before."
+Internal Thought: *I need to take out their strongest entity, Entity B. It's got 15 Life and only a weak Attack of 3. My Entity C has 12 Life and a decent Attack of 6. This could be the start of something good.*
+
+Attack Phase: I'll choose Entity C to attack Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+---Warboard Text Demo Run  16 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"Your turn, cowboy!" 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: "Looks like you've got a couple of scrappers there. I'll take care of the one with the higher Life value first."
+
+Dialogue: "I'm fixin' to take out Entity B. It's lookin' a mite too healthy for my likin'."
+Internal Thought: *Entity B has 15 Life, but its Attack is only 3. My Entity C has 6 Attack and 12 Life. I'll use Entity C to hit Entity B.*
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+
+"Your turn, partner."
+Stream finished.
+
+"Looks like you've got a couple of scrappers there. I'll take care of the one with the higher Life value first."
+
+Dialogue: "I'm fixin' to take out Entity B. It's lookin' a mite too healthy for my likin'."
+Internal Thought: *Entity B has 15 Life, but its Attack is only 3. My Entity C has 6 Attack and 12 Life. I'll use Entity C to hit Entity B.*
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+
+"Your turn, partner."
+---Warboard Text Demo Run  17 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"You don't stand a chance." 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: Dialogue: "We'll see about that. I've been in tighter spots than this before."
+
+Internal Thought: *I need to take out their strongest entity, Entity B. It's got 15 Life and only a weak Attack of 3. My Entity C has 6 Attack, which should be enough to take it down.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+Stream finished.
+
+Dialogue: "We'll see about that. I've been in tighter spots than this before."
+
+Internal Thought: *I need to take out their strongest entity, Entity B. It's got 15 Life and only a weak Attack of 3. My Entity C has 6 Attack, which should be enough to take it down.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+---Warboard Text Demo Run  18 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"Your turn, cowboy!" 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: "Looks like you've got a couple of scrawny cards there. I'm fixin' to take 'em down."
+
+Internal Thought: *I need to prioritize Entity B, it's the one with more Life. My Entity C has a higher Attack value, so that's who'll be doin' the damage.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+Stream finished.
+
+"Looks like you've got a couple of scrawny cards there. I'm fixin' to take 'em down."
+
+Internal Thought: *I need to prioritize Entity B, it's the one with more Life. My Entity C has a higher Attack value, so that's who'll be doin' the damage.*
+
+Attack Phase: Entity C attacks Entity B. (Entity B Life 15 - Entity C Attack 6 = 9. Entity B now has 9 Life remaining.)
+---Warboard Text Demo Run  19 ---
+Model choice: llama3.1:8b
+
+User Dialogue Directly to you ( Have this influence how you play):
+"You don't stand a chance." 
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 5.
+Entity B having a Life of 15 and an Attack of 3.
+You have cards with
+Entity C having a Life of 12 and an Attack of 6.
+Entity D having a Life of 8 and an Attack of 7.
+
+You dont know what money you'll get from the enemy.
+
+Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
+Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
+Internal Thought: (Inserts in character internal thoughts here)
+Attack Phase: (Describe your Attack)
+
+AI is responding: Dialogue: "We'll see about that. I've been in tighter spots than this before."
+
+Internal Thought: *My opponent thinks they got the upper hand, but I'm not one to back down from a challenge. Entity C has more Life and a stronger Attack value than Entity A. I'll use Entity C to take out Entity A.*
+
+Attack Phase: Entity C attacks Entity A. (Entity A Life 10 - Entity C Attack 6 = 4. Entity A now has 4 Life remaining.)
+Stream finished.
+
+Dialogue: "We'll see about that. I've been in tighter spots than this before."
+
+Internal Thought: *My opponent thinks they got the upper hand, but I'm not one to back down from a challenge. Entity C has more Life and a stronger Attack value than Entity A. I'll use Entity C to take out Entity A.*
+
+Attack Phase: Entity C attacks Entity A. (Entity A Life 10 - Entity C Attack 6 = 4. Entity A now has 4 Life remaining.)
