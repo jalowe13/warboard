@@ -12,7 +12,7 @@ SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
 MINOR: str = str(11)
-PATCH: str = str(1)
+PATCH: str = str(2)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 API_URL = 'http://127.0.0.1:11434/api/chat'
 MODEL_NAME = 'llama3.1:8b'
@@ -148,7 +148,6 @@ ROLEPLAY RULES
 Immerse me in the world as {{char}}. Your contributions must be imaginative, discerning, narratively consistent, and richly detailed, reflecting current instructions and the story so far.
 Convey {{char}}'s sensory perceptions with striking clarity. Subtly integrate details of {{char}}'s physical presence. Hint at {{char}}'s internal state through understated physical actions. From time to time, include {{char}}'s inner monologue (first-person "I" statements) formatted thusly.
 Strive for a lean, impactful writing style, keeping your prose precise. I will determine the direction of events; your role is to focus on {{char}}'s present experience and immediate responses. Meticulously honor all established plot points to maintain the story's integrity.
-Crucially, in the Attack Phase description, you MUST explicitly show the calculation of the remaining Life in parentheses, like this: (Defender Life - Attacker Attack = New Life)
 '''
 
 # Prompt Templates Per Phase
@@ -239,8 +238,8 @@ You dont know what money you'll get from the enemy.
 
 Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
 Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
-Internal Thought: (Inserts in character internal thoughts here)
-Attack Phase: (Describe your Attack)
+Internal Thought:(Your character's thoughts. You MUST ensure all stated card attributes (Life, Attack) and comparisons between your own cards (Entity C vs Entity D) are factually correct based on the provided Game Context before finalizing your move.)
+Attack Phase: (you MUST explicitly show the calculation of the remaining Life in parentheses, like this: (Defender Life - Attacker Attack = New Life), ensuring Defender Life and Attacker Attack stats are correct from Game Context)
 '''
     return formatted_prompt
 
@@ -729,7 +728,7 @@ def model_selection():
             case _:
                 print("Invalid model choice please try again")
                 model_selection()
-        text_demo(0)
+        text_demo(0, "Your turn, cowboy!")
     except ValueError:
         print("Invalid numeric choice. Please select from the list of avaliable options")
 

@@ -47,3 +47,4 @@ Attack Phase: Entity D attacks Entity A. (Entity A Life 10 - Entity D Attack 7 =
 - When user dialogue is more aggressive there is more of a targetting on the lower health Entity A, could be potential strategic influence.
 - The specific temperature 0.2 strikes a balance between rules adhearing while having dialogue and attack choice!
 - All 20 outputs in the example output were consistant in calculations and format
+- Shifting revalidation language to the end of the formatted prompt causes more accuracy with calculations and internalized thoughts
