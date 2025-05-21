@@ -11,8 +11,8 @@ SCREEN_WIDTH: int = 720
 SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
-MINOR: str = str(11)
-PATCH: str = str(3)
+MINOR: str = str(12)
+PATCH: str = str(0)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 API_URL = 'http://127.0.0.1:11434/api/chat'
 MODEL_NAME = 'llama3.1:8b'
@@ -521,28 +521,55 @@ def detect_cardpress(pressed, current_card, player_cards, mouseX, mouseY, need_u
             current_card = None
     return [current_card,need_update]
 
-# TODO: Data cleaning for AI prompt evaluation
-def ai_game_state_evaulation(player_cards, enemy_cards):
-    print("Start")
+# Evaluate board state with F1 key
+def ai_game_state_evaulation(player_cards, ai_cards):
+    print("Start AI Board Evaluation")
+    class Entity:
+        def __init__(self, entity_id):
+            self.id = entity_id
+            self.life = None
+            self.attack = None
+            self.currency = None
 
-    lifeA, lifeB, lifeC, lifeD, attackA, attackB, attackC, attackD = None # Initial Life
+    enemy_entities = [Entity("A"), Entity("B")]
+    ai_entites = [Entity("C"), Entity("D")] 
 
-    for c in player_cards:
-        c_rank = c.get_rank()
-        c_suit = c.get_suit()
-        print("Player", c_rank, " of ", c_suit)
-        if c_suit == "Life":
-            if lifeA is None:
-                lifeA = c_rank
-            else:
-                lifeB = c_rank
-        # TODO: Attack
-            
-    for c in enemy_cards:
-        c_info = c.get_info()
-        print("Enemy", c_info)
+    def assign_stat(entity_list, stat, value):
+        for entity in entity_list:
+            if getattr(entity, stat) is None:
+                setattr(entity, stat, value)
+                return True
+        return False
 
-    os.system("pause")
+    def process_cards(cards, entites):
+        for c in cards:
+            c_rank = c.get_rank()
+            c_suit = c.get_suit()
+            print(c_rank, " of ", c_suit)
+            match c_suit:
+                case "Life":
+                    assign_stat(entites, "life", c_rank) 
+                case "Attack":
+                    assign_stat(entites, "attack", c_rank)
+                # Note: Currency is not considered because currency card is inherently hidden to the AI and player
+
+    # This is from the perspective of the AI so the player is the enemy heince this naming convention
+    process_cards(ai_cards, ai_entites)
+    process_cards(player_cards, enemy_entities)
+    
+    user_input = input("What would you like to say to your opponent?: ")
+    prompt_for_ai = create_attack_prompt(
+        user_input=user_input,
+        money=25,
+        items=["Queen"],
+        opponent_entity_a_life=enemy_entities[0].life, opponent_entity_a_attack=enemy_entities[0].attack,
+        opponent_entity_b_life=enemy_entities[1].life, opponent_entity_b_attack=enemy_entities[1].attack,
+        ai_entity_c_life=ai_entites[0].life, ai_entity_c_attack=ai_entites[0].attack,
+        ai_entity_d_life=ai_entites[1].life, ai_entity_d_attack=ai_entites[1].attack
+    )
+    print(prompt_for_ai)
+    response = send_message_streaming(prompt_for_ai, 0.2) 
+    print(response)
 
 # Detect if a game event happens
 def detect_events(game, running, mouseX, mouseY):
@@ -706,15 +733,9 @@ def text_demo(run: int, user_input: str):
         ai_entity_c_life=12, ai_entity_c_attack=6,
         ai_entity_d_life=8, ai_entity_d_attack=7
     )
-    # prompt_for_ai = create_attack_prompt(
-    #     user_input=user_input, 
-    #     money=10,
-    #     items=[], 
-    #     opponent_entity_a_life=8, opponent_entity_a_attack=6,
-    #     opponent_entity_b_life=18, opponent_entity_b_attack=4,
-    #     ai_entity_c_life=10, ai_entity_c_attack=4,
-    #     ai_entity_d_life=6, ai_entity_d_attack=9
-    # )
+    # Cross validation of attack prompt 
+
+   
     print(prompt_for_ai)
     response = send_message_streaming(prompt_for_ai, 0.2) 
     print(response)
