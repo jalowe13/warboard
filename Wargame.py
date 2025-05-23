@@ -11,7 +11,7 @@ SCREEN_WIDTH: int = 720
 SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
-MINOR: str = str(12)
+MINOR: str = str(13)
 PATCH: str = str(0)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 API_URL = 'http://127.0.0.1:11434/api/chat'
@@ -341,6 +341,8 @@ class Card:
         self.suit: str = suit  
         self.x: float = x
         self.y: float = y
+        self.initial_x: float = x  # Store initial x position
+        self.initial_y: float = y  # Store initial y position
         self.color: tuple[int,int,int] = (255,0,0)
         self.size_x: int = 64 
         self.size_y: int = 89 
@@ -396,6 +398,11 @@ class Card:
         self.x = x - self.size_x/2
         self.y = y - self.size_y/2
         self.update()
+    def reset_position(self):
+        """Resets the card's position to its initial coordinates."""
+        self.x = self.initial_x
+        self.y = self.initial_y
+        self.update()
     def in_range(self,x,y): # Check range of input x y in relation to the card
         if self.x_min <= x <= self.x_max and self.y_min <= y <= self.y_max:
             return True
@@ -425,36 +432,52 @@ class Deck:
 
     # Draws a card onto the screen, this does the initial position and constructor spawning
     def draw_card(self, enemy, draw_primary=None):
-        # TODO: Each card need to spawn back at the position where the other one was placed
-        if draw_primary is not None:
-            self.draw_primary = draw_primary 
-        # Could draw based on card type
+        """
+        Draws a card, positions it, and sets its draw_type.
+        Only toggles the default draw_primary if no specific one is provided.
+        """
+        if not self.cards:
+            print("Deck is empty, cannot draw card!")
+            return None # Handle empty deck
+
         card = self.cards.pop()
         modifier: int = 0
         if enemy:
-            modifier = 400 
-        print("Current self draw primary is ", self.draw_primary)
-        # card.set_draw_type(self.draw_primary) # Cards now remember the draw type
-        if self.draw_primary:  
-            #self.draw_primary = False
+            modifier = 400
+
+        # Determining and setting the draw type for this call 
+        current_draw_type = self.draw_primary
+        if draw_primary is not None:
+            current_draw_type = draw_primary  # Use the override if provided
+
+        card.set_draw_type(current_draw_type)
+
+        if current_draw_type:  # Draw Left Set (True)
+            print(f"Drawing Left Set (True)")
             if card.get_suit() == "Attack":
-                card.update_cords(SCREEN_WIDTH/2 ,SCREEN_HEIGHT/2.5 - modifier)
+                # Positioned left-center
+                card.update_cords(SCREEN_WIDTH/4 + 250 - card.x_max, SCREEN_HEIGHT/2.5 - modifier)
             elif card.get_suit() == "Life":
-                card.update_cords(SCREEN_WIDTH/2 + 3 * card.x_max,SCREEN_HEIGHT/2.5 - modifier)
+                # Positioned right of Attack
+                card.update_cords(SCREEN_WIDTH/4 + 250 + 2.5 * card.x_max, SCREEN_HEIGHT/2.5 - modifier)
             elif card.get_suit() == "Currency":
-                card.update_cords(SCREEN_WIDTH/2 + card.x_max,SCREEN_HEIGHT/2 - modifier)
-            self.draw_primary = False
-        else:
-            print("Draw primary is not false")
+                # Positioned between Attack and Life (below)
+                card.update_cords(SCREEN_WIDTH/4 + 250 + 0.25 * card.x_max, SCREEN_HEIGHT/2 - modifier)
+        else: # Draw Right Set (False)
+            print(f"Drawing Right Set (False)")
             if card.get_suit() == "Attack":
-                card.update_cords(SCREEN_WIDTH + 6*card.x_max ,SCREEN_HEIGHT/2.5 - modifier)
-            if card.get_suit() == "Life":
-                card.update_cords(SCREEN_WIDTH + 9*card.x_max,SCREEN_HEIGHT/2.5 - modifier)
+                card.update_cords(3 * SCREEN_WIDTH/4 + 250 - card.x_max, SCREEN_HEIGHT/2.5 - modifier)
+            elif card.get_suit() == "Life":
+                card.update_cords(3 * SCREEN_WIDTH/4 + 250 + 2.5 * card.x_max, SCREEN_HEIGHT/2.5 - modifier)
             elif card.get_suit() == "Currency":
-                card.update_cords(SCREEN_WIDTH + 7*card.x_max,SCREEN_HEIGHT/2 - modifier)
-            self.draw_primary = True
-        print("The card drawn was ", card.get_info(), card.get_cords())
-        print("There are now ", len(self.cards), " left")
+                card.update_cords(3 * SCREEN_WIDTH/4 + 250 + 0.25 * card.x_max, SCREEN_HEIGHT/2 - modifier)
+
+        # Default position if override is not passed in 
+        if draw_primary is None:
+            self.draw_primary = not self.draw_primary
+
+        print(f"Drawn: {card.get_info()}, Pos: {card.get_cords()}, Set: {'Left' if current_draw_type else 'Right'}")
+        print(f"Cards left: {len(self.cards)}")
         return card
 
 def setup():
@@ -513,7 +536,11 @@ def detect_cardpress(pressed, current_card, player_cards, mouseX, mouseY, need_u
     for c in player_cards:
         if pressed and current_card is not c and c.in_range(mouseX, mouseY):
             if current_card is None:
-                current_card = c 
+                current_card = c
+                if not hasattr(current_card, 'has_been_picked_up'):
+                    current_card.initial_x = c.x  # Store initial x position when picked up
+                    current_card.initial_y = c.y  # Store initial y position when picked up
+                    current_card.has_been_picked_up = True
         if current_card is not None and pressed:
             current_card.update_cords(mouseX, mouseY)
             need_update = True
@@ -585,8 +612,18 @@ def detect_events(game, running, mouseX, mouseY):
     return [mouseX,mouseY,pressed, running]
 
 # Detect if a card is colliding with another card
-def detect_collision(current_card,player_cards,enemy_cards,x,y, need_update):
-    draw_type = None 
+def detect_collision(current_card, player_cards, enemy_cards, x, y, need_update):
+    """
+    Detects collisions between the player's current card and enemy cards.
+    Handles card rank comparisons and removes cards accordingly.
+    Returns:
+        current_card: The card currently held by the player (or None).
+        need_update: A boolean indicating whether the screen needs to be updated.
+        removed_enemy_card: The enemy card that was removed, or None if no card was removed.
+        redraw_set_type: The draw_type of the set that needs to be redrawn, or None if no redraw is needed.
+    """
+    removed_enemy_card = None
+    redraw_set_type = None
     if current_card is not None:
         for c in enemy_cards:
             if current_card is not c and (
@@ -611,22 +648,56 @@ def detect_collision(current_card,player_cards,enemy_cards,x,y, need_update):
                     if r1 >= r2: 
                         print("Overtakes")
                         if c in enemy_cards:
-
-                            enemy_cards = enemy_cards.remove(c)
+                            removed_enemy_card = c
+                            redraw_set_type = c.get_draw_type() # Store the draw_type of the removed set
+                            
                     else: # Calc diff
                         diff = r2 - r1
                         print("Diff", diff)
                         c.set_rank(diff)
 
                     if current_card in player_cards:
-                        print("Must remove a card from the player cards")
-                        player_cards = player_cards.remove(current_card)
+                        print("Reset position")
+                        current_card.reset_position()
                         need_update = True
                         current_card = None
                         break
 
                 #os.system("pause")
-    return current_card, need_update, draw_type
+
+    return current_card, need_update, removed_enemy_card, redraw_set_type
+
+def handle_enemy_redraw(removed_card: Card, enemy_cards: list, 
+                          enemy_attack_deck: Deck, enemy_life_deck: Deck, 
+                          enemy_currency_deck: Deck, redraw_set_type):
+    """
+    Removes the defeated enemy set and redraws the other set.
+    """
+    if removed_card is None:
+        return False # No redraw needed
+
+    defeated_set_type = removed_card.get_draw_type()
+    print(f"Enemy Life card removed from {'Left' if defeated_set_type else 'Right'} set.")
+
+    cards_to_remove = [
+        card for card in enemy_cards 
+        if card.get_draw_type() == defeated_set_type
+    ]
+    
+    print(f"Removing {len(cards_to_remove)} cards from the defeated set.")
+    for card in cards_to_remove:
+        if card in enemy_cards:
+            enemy_cards.remove(card)
+
+    new_attack = enemy_attack_deck.draw_card(enemy=True, draw_primary=redraw_set_type)
+    new_life = enemy_life_deck.draw_card(enemy=True, draw_primary=redraw_set_type)
+    new_currency = enemy_currency_deck.draw_card(enemy=True, draw_primary=redraw_set_type)
+
+    # --- 4. Add new cards to the enemy_cards list ---
+    new_cards = [card for card in [new_attack, new_life, new_currency] if card is not None]
+    enemy_cards.extend(new_cards)
+
+    return True # Indicates an update happened
 
 # Main Game Logic Enter
 def main():
@@ -655,7 +726,9 @@ def main():
     x,y = 0, 0
     initial_draw = True
     current_card = None
-    need_update = True 
+    need_update = True
+    enemy_draw_primary = True # Add a draw_primary flag for the enemy
+    player_draw_primary = True
 
     # Game Loop
     while running:
@@ -669,8 +742,15 @@ def main():
         # Card press detection needs to be generalized
         current_card,need_update = detect_cardpress(pressed, current_card, player_cards, x, y, need_update) 
         # Enemy collision detection
-        current_card, need_update, draw_type = detect_collision(current_card,player_cards, enemy_cards,x,y, need_update)
-        if len(player_cards) == 5: # Card Destroyed, draw a new card
+        current_card, need_update, removed_enemy_card, redraw_set_type = detect_collision(current_card,player_cards, enemy_cards,x,y, need_update)
+        if removed_enemy_card:
+             redraw_happened = handle_enemy_redraw(
+                removed_enemy_card, enemy_cards, 
+                enemy_attack_deck, enemy_life_deck, enemy_currency_deck, redraw_set_type
+            )
+             if redraw_happened:
+                need_update = True
+        if len(player_cards) < 6: # Card Destroyed, draw a new card
             ak_amt = 0
             lf_amt = 0
             cr_amt = 0
@@ -683,16 +763,12 @@ def main():
                 if tp == "Currency":
                     cr_amt = cr_amt + 1
             if ak_amt < 2:
-                c: Card = attack_deck.draw_card(enemy=False, draw_primary=draw_type)
+                c: Card = attack_deck.draw_card(enemy=False, draw_primary=player_draw_primary)
                 player_cards.append(c)
+                player_draw_primary = not player_draw_primary
             need_update = True
             current_card = None
-            # This is where the ai would then calculate its move, for now its the message prompt
-            user_message = input("Enter your message: ")
-            if user_message:
-                response = send_message_streaming(user_message)
-                print("Response: ", response)
-
+        # TODO: Collision effect happened
         # Only update the screen if needed
         if need_update or initial_draw:
             screen.fill(SCREEN_BACKGROUND_COLOR)
