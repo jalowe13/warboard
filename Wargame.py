@@ -11,7 +11,7 @@ SCREEN_WIDTH: int = 720
 SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
-MINOR: str = str(13)
+MINOR: str = str(14)
 PATCH: str = str(0)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 API_URL = 'http://127.0.0.1:11434/api/chat'
@@ -48,7 +48,7 @@ WARBOARD V1 is a two-player card game.  The goal is to reduce your opponent's Li
 | Item   | Cost  | Effect                                     |
 | :----- | :---- | :----------------------------------------- |
 | Jack   | $16   | Eliminates one target enemy entity.          |
-| Queen  | $20   | Prevents next attack against your own selected enemy, like a barrier|
++| Queen  | $20   | Use on one of *YOUR* entities. That entity gains a barrier that *prevents the next single attack* targeting it. |
 | King   | $30   | Eliminates all enemy entities.              |
 | Ace    | $42   | Eliminates all enemy enemy entitys and restores your Life of all your entities to its starting value. |
 | Chance | $7    | A random effect (details will be provided).  |
@@ -140,13 +140,39 @@ Internal Thought: *Opponent's Entity A only has 5 Life. My Entity C has 9 Attack
 Attack Phase: Entity C attacks Entity A. (Entity A Life 5 - Entity C Attack 9 = -4. Entity A is defeated and removed from play.)
 Shop Phase: None
 Item Use Phase: None
+
+EXAMPLE 4:
+
+user:
+User Dialogue Directly to you ( Have this influence how you play):
+"Take that partner! Say, Tyler.. What's your favorite food. Good game we're havintg here"
+[YOUR TURN ATTACK PHASE]
+Game Info:
+Money: $25
+Items : Queen
+Game Context:
+Your opponent has cards with
+Entity A having a Life of 10 and an Attack of 7.
+Entity B having a Life of 9 and an Attack of 3.
+You have cards with
+Entity C having a Life of 6 and an Attack of 8.
+Entity D having a Life of 12 and an Attack of 4.
+
+assistant:
+Dialogue: "Favorite food? Hmph. Whatever fills the belly and keeps me movin'. Right now, though, I'm thinkin' about how Entity A is lookin' a little too healthy."
+Internal Thought: *Entity A has 10 Life, but Entity B is weaker. My Entity C hits harder than my Entity D. I'll use Entity C to hit Entity A.*
+Attack Phase: Entity C attacks Entity A. (Entity A Life 10 - Entity C Attack 8 = 2. Entity A now has 2 Life remaining.)
+
 '''
 
 ROLEPLAY_RULES = '''
 ROLEPLAY RULES
 
+ROLEPLAY RULES
+
 Immerse me in the world as {{char}}. Your contributions must be imaginative, discerning, narratively consistent, and richly detailed, reflecting current instructions and the story so far.
 Convey {{char}}'s sensory perceptions with striking clarity. Subtly integrate details of {{char}}'s physical presence. Hint at {{char}}'s internal state through understated physical actions. From time to time, include {{char}}'s inner monologue (first-person "I" statements) formatted thusly.
+*Crucially: In your 'Dialogue' section, briefly acknowledge or react in character to your opponent's direct conversation or questions (like asking about food), even if off-topic, before stating your main game-related dialogue.*
 Strive for a lean, impactful writing style, keeping your prose precise. I will determine the direction of events; your role is to focus on {{char}}'s present experience and immediate responses. Meticulously honor all established plot points to maintain the story's integrity.
 '''
 
@@ -237,9 +263,10 @@ Entity D having a Life of {ai_entity_d_life} and an Attack of {ai_entity_d_attac
 You dont know what money you'll get from the enemy.
 
 Describe your move with this format and STAY IN CHARACTER WITH DIALOGUE TO YOUR OPPONENT AND THOUGHTS:
-Dialogue: (Insert in character dialogue here, don't repeat previous dialogue)
-Internal Thought:(Your character's thoughts. You MUST ensure all stated card attributes (Life, Attack) and comparisons between your own cards (Entity C vs Entity D) are factually correct based on the provided Game Context before finalizing your move.)
-Attack Phase: (you MUST explicitly show the calculation of the remaining Life in parentheses, like this: (Defender Life - Attacker Attack = New Life), ensuring Defender Life and Attacker Attack stats are correct from Game Context. If New Life is 0 or less, you MUST state 'Defender is defeated and removed from play' and not report any other remaining life number for that defender.)
+*IMPORTANT: Your 'Dialogue' MUST start by briefly acknowledging the user's last comment then proceed.*
+Dialogue: (Insert in character dialogue here. *Briefly acknowledge the user's last comment/question first*, then proceed with your game talk. Don't repeat previous dialogue)
+Internal Thought:(Think step-by-step: 1. State the facts: My C=6A, D=7A. Opponent A=10L, B=15L. *Crucial Fact Check: D (7A) is stronger than C (6A).* 2. Consider the opponent: They said '{user_input}'. How does this make Tyler react? Does it make me want to be aggressive, cautious, or target something specific? 3. Decide the move: Based on the facts AND my reaction to the opponent, I will use [C or D] to attack [A or B]. 4. Justify: Explain *why* (e.g., 'Using D's power', or 'He taunted, so I'll hit his weaker A', or 'Going for B to show strength', or 'Using C to test the waters'). *You MUST get the 7>6 fact correct if you state it.*)
+Attack Phase: (you MUST explicitly show the calculation of the remaining Life in parentheses...)
 '''
     return formatted_prompt
 
