@@ -12,7 +12,7 @@ SCREEN_BACKGROUND_COLOR: tuple[int,int,int] = (53,101,77)
 TITLE_NAME: str = "WarBoard"
 MAJOR: str = str(0)
 MINOR: str = str(14)
-PATCH: str = str(0)
+PATCH: str = str(1)
 TITLE: str = TITLE_NAME + " v." + MAJOR + "." + MINOR + "." + PATCH
 API_URL = 'http://127.0.0.1:11434/api/chat'
 MODEL_NAME = 'llama3.1:8b'
@@ -145,7 +145,7 @@ EXAMPLE 4:
 
 user:
 User Dialogue Directly to you ( Have this influence how you play):
-"Take that partner! Say, Tyler.. What's your favorite food. Good game we're havintg here"
+"Take that partner! Say, Tyler.. What's your favorite food. Good game we're having here"
 [YOUR TURN ATTACK PHASE]
 Game Info:
 Money: $25
